@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"dopamine-game","appId":"1:989158188177:android:bc844f06fe049c1f01cb30","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"dopamine-game","configurations":{"android":"1:989158188177:android:bc844f06fe049c1f01cb30","ios":"1:989158188177:ios:af4fac9ceb9f1ce501cb30"}}}}}}

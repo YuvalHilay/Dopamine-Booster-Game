@@ -1,0 +1,82 @@
+{
+    "userName" : "Username",
+    "@userName": {
+        "description": "Username"
+    },
+    "password" : "Password",
+    "@password": {
+        "description": "Password"
+    },
+    "loginBtn" : "Login",
+    "@loginBtn": {
+        "description": "Login"
+    },
+    "noAcc" : "Don't have an account? ",
+    "@noAcc": {
+        "description": "Don't have an account? "
+    },
+    "forgotPass" : "Forgot Password",
+    "@forgotPass": {
+        "description": "Forgot Password"
+    },
+    "regsHere" : "Register Here",
+    "@regsHere": {
+        "description": "Register Here"
+    },
+    "email" : "Email",
+    "@email": {
+        "description": "Email"
+    },
+    "haveAcc" : "Already have an Account? ",
+    "@haveAcc": {
+        "description": "Already have an Account? "
+    },
+    "confirmPass" : "Confirm Password",
+    "@confirmPass": {
+        "description": "Confirm Password"
+    },
+    "registerBtn" : "Register",
+    "@registerBtn": {
+        "description": "Register"
+    },
+    "loginHere" : "Login Here",
+    "@loginHere": {
+        "description": "Login Here"
+    },
+    "firstName" : "First Name",
+    "@firstName": {
+        "description": "First Name"
+    },
+    "lastName" : "Last Name",
+    "@lastName": {
+        "description": "Last Name"
+    },
+    "dateOfBirth" : "Date of Birth: ",
+    "@dateOfBirth": {
+        "description": "Login Here"
+    },
+    "nextBtn" : "Next",
+    "@nextBtn": {
+        "description": "Next"
+    },
+    "backBtn" : "Back",
+    "@backBtn": {
+        "description": "Back"
+    },
+    "errEmail" : "Enter a valid email", 
+    "@errEmail": {
+        "description": "Enter a valid email"
+    },
+    "errPassword" : "Password must be at least 6 characters",
+    "@errPassword": {
+        "description": "Password must be at least 6 characters"
+    },
+     "signupWith" : " Sign un with ", 
+    "@signupWith": {
+        "description": " ign un with "
+    },
+    "termsCheckBox" : "I agree to the terms and conditions",
+    "@termsCheckBox": {
+        "description": "I agree to the terms and conditions"
+    }
+}

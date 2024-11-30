@@ -1,0 +1,24 @@
+{
+    "@@locale": "he",
+    "userName" : "שם משתמש",
+    "password" : "סיסמא",
+    "loginBtn" : "התחבר",
+    "email" : "אימייל",
+    "noAcc": "אין לך חשבון? ",
+    "forgotPass": "שחכת סיסמא? ",
+    "regsHere": "הירשם כאן ",
+    "haveAcc": "יש לך כבר חשבון? ",
+    "confirmPass": "אשר את הסיסמה",
+    "registerBtn": "הרשמה",
+    "loginHere": "הכנס כאן",
+    "firstName" : "שם פרטי",
+    "lastName" : "שם משפחה",
+    "dateOfBirth" : "תאריך לידה",
+    "nextBtn" : "הבא",
+    "backBtn" : "בחזרה",
+    "signupWith" : " התחבר באמצעות ",
+    "errPassword" :  "הסיסמה חייבת להיות לפחות 6 תווים" ,
+    "errEmail" :  "הזן כתובת אימייל חוקית" ,
+    "termsCheckBox" : "אני מסכים לתנאים וההגבלות"
+
+}
