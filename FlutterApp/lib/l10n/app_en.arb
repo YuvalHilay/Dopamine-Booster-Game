@@ -11,9 +11,9 @@
     "@loginBtn": {
         "description": "Login"
     },
-    "noAcc" : "Don't have an account? ",
+    "noAcc" : "Don't have an Account? ",
     "@noAcc": {
-        "description": "Don't have an account? "
+        "description": "Don't have an Account? "
     },
     "forgotPass" : "Forgot Password",
     "@forgotPass": {
@@ -63,17 +63,245 @@
     "@backBtn": {
         "description": "Back"
     },
-    "errEmail" : "Enter a valid email", 
+    "errEmail" : "Enter a valid email.", 
     "@errEmail": {
-        "description": "Enter a valid email"
+        "description": "Enter a valid email."
     },
-    "errPassword" : "Password must be at least 6 characters",
+    "errPassword" : "Enter a valid password.",
     "@errPassword": {
-        "description": "Password must be at least 6 characters"
+        "description": "Enter a valid password."
     },
-     "signupWith" : " Sign un with ", 
+    "signupWith" : " Sign up with ", 
     "@signupWith": {
-        "description": " ign un with "
+        "description": " Sign up with "
+    },
+    "fillField" : "Please Fill in this field.", 
+    "@fillField": {
+        "description": "Please Fill in this field."
+    },
+    "math" : "Math", 
+    "@math": {
+        "description": "Math"
+    },
+    "science" : "Science", 
+    "@science": {
+        "description": "Science"
+    },
+    "computers" : "Computers", 
+    "@computers": {
+        "description": "Computers"
+    },
+    "categories" : "Categories", 
+    "@categories": {
+        "description": "Categories"
+    },
+    "category" : "Category", 
+    "@category": {
+        "description": "Category"
+    },
+    "corrAns" : "Correct Answer", 
+    "@corrAns": {
+        "description": "Correct Answer"
+    },
+    "home" : "Home", 
+    "@home": {
+        "description": "Home"
+    },
+    "quizzes" : "Quizzes", 
+    "@quizzes": {
+        "description": "Quizzes"
+    },
+    "profile" : "Profile", 
+    "@profile": {
+        "description": "Profile"
+    },
+    "contact" : "Contact", 
+    "@contact": {
+        "description": "Contact"
+    },
+    "settings" : "Settings", 
+    "@settings": {
+        "description": "Settings"
+    },
+    "help" : "Help", 
+    "@help": {
+        "description": "Help"
+    },
+    "contactUs" : "Contact Us", 
+    "@contactUs": {
+        "description": "Contact Us"
+    },
+    "name" : "Name", 
+    "@name": {
+        "description": "Name"
+    },
+    "message" : "Message", 
+    "@message": {
+        "description": "Message"
+    },
+    "contactMsg1" : "We’d love to hear from you!", 
+    "@contactMsg1": {
+        "description": "We’d love to hear from you!"
+    },
+    "contactMsg2" : "Have questions, suggestions, or feedback? Please fill out the form below.", 
+    "@contactMsg2": {
+        "description": "Have questions, suggestions, or feedback? Please fill out the form below."
+    },
+    "darkMode" : "Dark Mode", 
+    "@darkMode": {
+        "description": "Dark Mode"
+    },
+    "enableNotifications" : "Enable Notifications", 
+    "@enableNotifications": {
+        "description": "Enable Notifications"
+    },
+    "soundEffects" : "Sound Effects", 
+    "@soundEffects": {
+        "description": "Sound Effects"
+    },
+    "english" : "English", 
+    "@english": {
+        "description": "English"
+    },
+    "hebrew" : "Hebrew", 
+    "@hebrew": {
+        "description": "Hebrew"
+    },
+    "language" : "Language", 
+    "@language": {
+        "description": "Language"
+    },
+    "appVers" : "App Version", 
+    "@appVers": {
+        "description": "App Version"
+    },
+    "vers1" : "Version 1.0.0", 
+    "@vers1": {
+        "description": "Version 1.0.0"
+    },
+    "defSettings" : "Restore default", 
+    "@defSettings": {
+        "description": "Restore default"
+    },
+    "addQuizSuccess" : "The quiz was added successfully!", 
+    "@addQuizSuccess": {
+        "description": "The quiz was added successfully!"
+    },
+    "addQuizBtn" : "Add Quiz", 
+    "@addQuizBtn": {
+        "description": "Add Quiz"
+    },
+    "helpTitle" : "Help & Information", 
+    "@helpTitle": {
+        "description": "Help & Information"
+    },
+    "cancel" : "Cancel", 
+    "@cancel": {
+        "description": "Cancel"
+    },
+    "uploadPic" : "Tap to upload photo", 
+    "@uploadPic": {
+        "description": "Tap to upload photocel"
+    },
+    "enterOption" : "Enter Option {number}", 
+    "@enterOption": {
+        "description": "Enter Option {number}:"
+    },
+    "option" : "Option {number}:", 
+    "@option": {
+        "description": "Option {number}:"
+    },
+    "quizDesc" : "Quiz Description:", 
+    "@quizDesc": {
+        "description": "Quiz Description:"
+    },
+    "enterQuizDesc" : "Enter Quiz Description", 
+    "@enterQuizDesc": {
+        "description": "Enter quiz description:"
+    },
+    "logout" : "Logout", 
+    "@logout": {
+        "description": "Logout"
+    },
+    "sureLogout" : "Are you sure you want to log out?", 
+    "@sureLogout": {
+        "description": "Are you sure you want to log out?"
+    },
+    "logoutConf" : "Logout Confirmation", 
+    "@logourConf": {
+        "description": "Logout Confirmation"
+    },
+    "student" : "Student", 
+    "@student": {
+        "description": "Student"
+    },
+    "teacher" : "Teacher", 
+    "@teacher": {
+        "description": "Teacher"
+    },
+    "parent" : "Parent", 
+    "@parent": {
+        "description": "Parent"
+    },
+    "male" : "Male", 
+    "@male": {
+        "description": "Male"
+    },
+    "sport" : "Sport", 
+    "@sport": {
+        "description": "Sport"
+    },
+    "history" : "History", 
+    "@history": {
+        "description": "History"
+    },
+    "geography" : "Geography", 
+    "@geography": {
+        "description": "Geography"
+    },
+    "female" : "Female", 
+    "@female": {
+        "description": "Female"
+    },
+    "upperCase" : "1 Uppercase", 
+    "@upperCase": {
+        "description": "1 Uppercase"
+    },
+    "lowerCase" : "1 Lowercase", 
+    "@lowerCase": {
+        "description": "1 Lowercase"
+    },
+    "agreeTo" : "I agree to the ", 
+    "@agreeTo": {
+        "description": "I agree to the "
+    },
+    "termsAndC" : "Terms and Conditions", 
+    "@termsAndC": {
+        "description": "Terms and Conditions"
+    },
+    "emailReq" : "Email is required", 
+    "@emailReq": {
+        "description": "Email is required"
+    },
+    "passReq" : "Password is required", 
+    "@passReq": {
+        "description": "Password is required"
+    },
+    "sendFeedback" : "Send Feedback", 
+    "@sendFeedback": {
+        "description": "Send Feedback"
+    },
+    "game" : "Game", 
+    "@game": {
+        "description": "Game"
+    },
+    "oneNum" : "1 Number", 
+    "@oneNum": {
+        "description": "1 Number"
+    },
+    "minCharPass" : "Minimum 8 characters", 
+    "@minCharPass": {
+        "description": "Minimum 8 characters"
     },
     "termsCheckBox" : "I agree to the terms and conditions",
     "@termsCheckBox": {

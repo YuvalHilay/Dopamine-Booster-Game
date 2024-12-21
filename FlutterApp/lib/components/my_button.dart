@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyButton extends StatelessWidget {
   final String text;
@@ -18,9 +17,9 @@ class MyButton extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.primary,
-          borderRadius: BorderRadius.circular(17.r),
+          borderRadius: BorderRadius.circular(17),
         ),
-        padding: EdgeInsets.all(15.r),
+        padding: EdgeInsets.all(15),
         child: Center(
           child: Text(
             text,
