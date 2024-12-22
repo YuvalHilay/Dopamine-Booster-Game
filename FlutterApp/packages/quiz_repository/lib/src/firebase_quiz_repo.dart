@@ -22,7 +22,7 @@ class FirebaseQuizRepo implements QuizRepository {
       // Create quiz document with custom ID
       await _quizzesCollection.doc(quiz.quizId).set({
         'quizId': quiz.quizId,
-        'categoryId': quiz.category.categoryId,
+        'category': quiz.category,
         'author': quiz.author,
         'description': quiz.description,
         'question': quiz.question,
@@ -36,7 +36,7 @@ class FirebaseQuizRepo implements QuizRepository {
 
       // Update category's quizzes array
       await _categoriesCollection
-          .doc(quiz.category.categoryId)
+          .doc(quiz.category)
           .update({
         'quizIds': FieldValue.arrayUnion([quiz.quizId])
       });
@@ -46,26 +46,6 @@ class FirebaseQuizRepo implements QuizRepository {
     }
   }
 
-  @override
-  Future<void> updateQuiz(Quiz quiz) async {
-    try {
-      await _quizzesCollection.doc(quiz.quizId).update({
-        'categoryId': quiz.category.categoryId,
-        'author': quiz.author,
-        'description': quiz.description,
-        'question': quiz.question,
-        'answer1': quiz.answer1,
-        'answer2': quiz.answer2,
-        'answer3': quiz.answer3,
-        'answer4': quiz.answer4,
-        'correctAnswer': quiz.correctAnswer,
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-    } catch (e) {
-      log('Error updating quiz: ${e.toString()}');
-      rethrow;
-    }
-  }
 
   @override
   Future<void> deleteQuiz(String quizId) async {
@@ -117,13 +97,14 @@ class FirebaseQuizRepo implements QuizRepository {
       final category = Category(
         categoryId: categoryData['categoryId'],
         categoryName: categoryData['categoryName'],
+        quizCount: categoryData['quizCount'],
         quizzes: [], // We don't need to load all quizzes here
       );
 
       // Create and return quiz object
       return Quiz(
         quizId: quizData['quizId'],
-        category: category,
+        category: categoryData['categoryName'],
         author: quizData['author'],
         description: quizData['description'],
         question: quizData['question'],
@@ -163,6 +144,7 @@ class FirebaseQuizRepo implements QuizRepository {
       final category = Category(
         categoryId: categoryData['categoryId'],
         categoryName: categoryData['categoryName'],
+        quizCount: categoryData['quizCount'],
         quizzes: [], // Will be populated with the quizzes we're fetching
       );
 
@@ -171,7 +153,7 @@ class FirebaseQuizRepo implements QuizRepository {
         final data = doc.data() as Map<String, dynamic>;
         return Quiz(
           quizId: data['quizId'],
-          category: category,
+          category: data['category'],
           author: data['author'],
           description: data['description'],
           question: data['question'],
@@ -207,6 +189,7 @@ class FirebaseQuizRepo implements QuizRepository {
         return Category(
           categoryId: categoryId,
           categoryName: data['categoryName'],
+          quizCount: data['quizCount'],
           quizzes: quizzes,
         );
       }).toList());

@@ -3,7 +3,6 @@ import 'models/models.dart';
 
 abstract class QuizRepository {
   Future<void> addQuiz(Quiz quiz);
-  Future<void> updateQuiz(Quiz quiz);
   Future<void> deleteQuiz(String quizId);
   Future<Quiz> getQuiz(String quizId);
   Future<List<Quiz>> getQuizzesByCategory(String categoryId);

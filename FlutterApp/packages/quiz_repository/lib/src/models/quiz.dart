@@ -3,7 +3,7 @@ import 'models.dart';
 
 class Quiz {
   String quizId;
-  Category category;
+  String category;
   String author;
   String description;
   String question;

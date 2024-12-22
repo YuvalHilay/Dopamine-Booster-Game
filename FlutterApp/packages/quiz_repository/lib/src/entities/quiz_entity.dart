@@ -2,7 +2,7 @@ import '../models/models.dart';
 
 class QuizEntity {
   final String quizId;
-  final Category category;
+  final String category;
   final String author;
   final String description;
   final String question;

@@ -17,7 +17,7 @@ class _SignInScreenState extends State<SignInScreen> {
   // Controllers
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-    // Form states
+  // Form states
   final _formKey = GlobalKey<FormState>();
   bool signInRequired = false;
   IconData iconPassword = CupertinoIcons.eye_fill;
