@@ -19,7 +19,7 @@ final dummyCategory = Category(
     Quiz(
       quizId: '1',
       category: 'Math',
-      author: 'QuizMaster',
+      author: 'Sapir Cohen',
       description: 'A simple question to test your general knowledge.',
       question: 'What is the capital of France?',
       answer1: 'Berlin',
@@ -31,7 +31,7 @@ final dummyCategory = Category(
     Quiz(
       quizId: '2',
       category: 'Math',
-      author: 'QuizMaster',
+      author: 'Anna Smith',
       description: 'A question about the solar system.',
       question: 'Which planet is known as the Red Planet?',
       answer1: 'Earth',
@@ -174,21 +174,21 @@ class CategoryTile extends StatelessWidget {
 
   // Returns the localized name of a category based on the given `categoryName`.
   String getLocalizedCategoryName(BuildContext context, String categoryName) {
-  switch (categoryName) {
-    case 'Sports':
-      return AppLocalizations.of(context)!.sport;
-    case 'Science':
-      return AppLocalizations.of(context)!.science;
-    case 'History':
-      return AppLocalizations.of(context)!.history;
-    case 'Math':
-      return AppLocalizations.of(context)!.math;
-    case 'Geography':
-      return AppLocalizations.of(context)!.geography;
-    case 'English':
-      return AppLocalizations.of(context)!.english;
-    default:
-      return categoryName; // Fallback to the original name if no key exists
-  }
+    switch (categoryName) {
+      case 'Sports':
+        return AppLocalizations.of(context)!.sport;
+      case 'Science':
+        return AppLocalizations.of(context)!.science;
+      case 'History':
+        return AppLocalizations.of(context)!.history;
+      case 'Math':
+        return AppLocalizations.of(context)!.math;
+      case 'Geography':
+        return AppLocalizations.of(context)!.geography;
+      case 'English':
+        return AppLocalizations.of(context)!.english;
+      default:
+        return categoryName; // Fallback to the original name if no key exists
+    }
 }
 }

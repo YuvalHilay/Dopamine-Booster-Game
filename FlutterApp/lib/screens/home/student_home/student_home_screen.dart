@@ -42,7 +42,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
-          'Welcome, ${widget.user.firstName} ${widget.user.lastName}',
+          'Welcome ${widget.user.userRole}, ${widget.user.firstName} ${widget.user.lastName}',
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,

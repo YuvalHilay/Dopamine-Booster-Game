@@ -90,6 +90,9 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                 });
                 _pageController.jumpToPage(0);
               },
+              style: TextButton.styleFrom(
+    foregroundColor: Colors.blue, // Set the desired color here
+  ),
             ),
             TextButton(
               child: const Text('Back to Categories'),
@@ -97,6 +100,9 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
+              style: TextButton.styleFrom(
+    foregroundColor: Colors.black, // Set the desired color here
+  ),
             ),
           ],
         );

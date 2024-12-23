@@ -18,10 +18,9 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
     4,
     (index) => TextEditingController(),
   );
-  final TextEditingController _correctAnswerController =
-      TextEditingController();
-  final TextEditingController _quizDescriptionController =
-      TextEditingController();
+  final TextEditingController _correctAnswerController = TextEditingController();
+  final TextEditingController _quizQuestionController = TextEditingController();
+  final TextEditingController _quizDescriptionController = TextEditingController();
 
   String? _selectedCategory;
   File? _selectedImage;
@@ -190,6 +189,28 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text('Quiz Question:',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        MyTextField(
+          controller: _quizQuestionController,
+          hintText: 'Enter Quiz Question',
+          obscureText: false,
+          keyboardType: TextInputType.text,
+          validator: (value) {
+            if (value == null || value.trim().isEmpty) {
+              return 'Please enter the quiz question';
+            }
+            return null;
+          },
+          errorMsg: '', // You can pass an error message if needed
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             AppLocalizations.of(context)!.quizDesc,
             style: const TextStyle(
@@ -223,7 +244,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             AppLocalizations.of(context)!.category,
-            style:  TextStyle(color: Theme.of(context).colorScheme.inversePrimary,
+            style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
