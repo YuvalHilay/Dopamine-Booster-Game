@@ -1,4 +1,3 @@
-import '../models/models.dart';
 
 class QuizEntity {
   final String quizId;
@@ -11,6 +10,7 @@ class QuizEntity {
   final String answer3;
   final String answer4;
   final String correctAnswer;
+  final String? img;
 
   // Constructor for initializing the entity.
   QuizEntity({
@@ -24,6 +24,7 @@ class QuizEntity {
     required this.answer3,
     required this.answer4,
     required this.correctAnswer,
+    this.img,
   });
 
   // Converts the current object into a map representation for serializing the entity to a database.
@@ -39,6 +40,7 @@ class QuizEntity {
       'answer3': answer3,
       'answer4': answer4,
       'correctAnswer': correctAnswer,
+      'img': img,
     };
   }
   // Factory method for creating a `QuizEntity` object from a map for deserializing data retrieved from a database.
@@ -54,6 +56,7 @@ class QuizEntity {
       answer3: doc['answer3'],
       answer4: doc['answer4'],
       correctAnswer: doc['correctAnswer'],
+      img: doc['img'] as String?,
     );
   }
 }

@@ -12,13 +12,17 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
+  final QuizRepository quizRepository = FirebaseQuizRepo(); // Initialize the quiz repository
   late PageController _pageController;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
   int _currentQuizIndex = 0;
   int _score = 0;
   bool _answered = false;
   String? _selectedAnswer;
-  late AnimationController _animationController;
-  late Animation<double> _animation;
+  List<Quiz> _quizzes = [];
+  bool _isLoading = true; // To handle loading state
 
   @override
   void initState() {
@@ -29,7 +33,28 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
       vsync: this,
     );
     _animation = CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
+
+    _loadQuizzes(); // Load quizzes for the selected category
   }
+
+ Future<void> _loadQuizzes() async {
+  try {
+    List<Quiz> quizzes = await quizRepository.getQuizzesByCategory(widget.category.categoryId);
+    debugPrint('Loaded quizzes: ${quizzes.length}');
+    setState(() {
+      _quizzes = quizzes;
+      _isLoading = false;
+    });
+  } catch (e) {
+    debugPrint('Error loading quizzes: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to load quizzes: $e')),
+    );
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
 
   @override
   void dispose() {
@@ -44,7 +69,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
     setState(() {
       _answered = true;
       _selectedAnswer = answer;
-      if (answer == widget.category.quizzes[_currentQuizIndex].correctAnswer) {
+      if (answer == _quizzes[_currentQuizIndex].correctAnswer) {
         _score++;
       }
     });
@@ -52,7 +77,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
     _animationController.forward();
 
     Timer(const Duration(seconds: 2), () {
-      if (_currentQuizIndex < widget.category.quizzes.length - 1) {
+      if (_currentQuizIndex < _quizzes.length - 1) {
         _pageController.nextPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
@@ -71,44 +96,43 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
 
   void _showResults() {
     showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Quiz Completed!'),
-          content: Text('Your score: $_score / ${widget.category.quizzes.length}'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Try Again'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                setState(() {
-                  _currentQuizIndex = 0;
-                  _score = 0;
-                  _answered = false;
-                  _selectedAnswer = null;
-                });
-                _pageController.jumpToPage(0);
-              },
-              style: TextButton.styleFrom(
-    foregroundColor: Colors.blue, // Set the desired color here
-  ),
-            ),
-            TextButton(
-              child: const Text('Back to Categories'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-              },
-              style: TextButton.styleFrom(
-    foregroundColor: Colors.black, // Set the desired color here
-  ),
-            ),
-          ],
-        );
-      },
+  context: context,
+  barrierDismissible: false,
+  builder: (BuildContext context) {
+    return AlertDialog(
+      title: const Text('Quiz Completed!'),
+      content: Text('Your score: $_score / ${_quizzes.length}'),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Try Again'),
+          onPressed: () {
+            Navigator.of(context).pop();
+            setState(() {
+              _currentQuizIndex = 0;
+              _score = 0;
+              _answered = false;
+              _selectedAnswer = null;
+            });
+            _pageController.jumpToPage(0);
+          },
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.blue, // Set the desired color for the Try Again button
+          ),
+        ),
+        TextButton(
+          child: const Text('Back to Categories'),
+          onPressed: () {
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
+          },
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.green, // Set the desired color for the Back to Categories button
+          ),
+        ),
+      ],
     );
-  }
+  },
+);}
 
   @override
   Widget build(BuildContext context) {
@@ -119,28 +143,30 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
         elevation: 0,
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            LinearProgressIndicator(
-              value: widget.category.quizzes.isNotEmpty
-                  ? (_currentQuizIndex + 1) / widget.category.quizzes.length.toDouble()
-                  : 0.0,
-              backgroundColor: Colors.grey[200],
-              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-            ),
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: widget.category.quizzes.length,
-                itemBuilder: (context, index) {
-                  final quiz = widget.category.quizzes[index];
-                  return _buildQuizCard(quiz);
-                },
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                children: [
+                  LinearProgressIndicator(
+                    value: _quizzes.isNotEmpty
+                        ? (_currentQuizIndex + 1) / _quizzes.length.toDouble()
+                        : 0.0,
+                    backgroundColor: Colors.grey[200],
+                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                  ),
+                  Expanded(
+                    child: PageView.builder(
+                      controller: _pageController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: _quizzes.length,
+                      itemBuilder: (context, index) {
+                        final quiz = _quizzes[index];
+                        return _buildQuizCard(quiz);
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -151,6 +177,34 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (quiz.img != null && quiz.img!.isNotEmpty)
+            Container(
+              height: 200, // Adjust the height as needed
+              margin: const EdgeInsets.only(bottom: 16),
+              child: Image.network(
+                quiz.img!,
+                fit: BoxFit.cover,
+                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                          : null,
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  debugPrint('Error loading image: $error');
+                  return Container(
+                    color: Colors.grey[300],
+                    child: const Center(
+                      child: Icon(Icons.error, color: Colors.red, size: 50),
+                    ),
+                  );
+                },
+              ),
+            ),
           Text(
             quiz.question,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
@@ -169,7 +223,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
           ),
           const SizedBox(height: 8),
           Text(
-            quiz.description,
+            'Quiz Description: ${quiz.description}',
             style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
@@ -206,7 +260,8 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
           child: ElevatedButton(
             onPressed: () => _handleAnswer(answer),
             style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.black87, backgroundColor: getButtonColor(),
+              foregroundColor: Colors.black87,
+              backgroundColor: getButtonColor(),
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0),

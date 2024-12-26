@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:Dopamine_Booster/components/my_textfield.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:quiz_repository/quiz.repository.dart';
 
 class AddQuizScreen extends StatefulWidget {
   const AddQuizScreen({Key? key}) : super(key: key);
@@ -12,6 +14,16 @@ class AddQuizScreen extends StatefulWidget {
 }
 
 class _AddQuizScreenState extends State<AddQuizScreen> {
+
+  final QuizRepository quizRepository = FirebaseQuizRepo(); // Initialize the quiz repository
+  // Initially empty categories list
+  List<String> _categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();  // Load categories when the screen is initialized
+  }
   final _formKey = GlobalKey<FormState>();
   // List of controllers for the option fields (4 options in total).
   final List<TextEditingController> _optionControllers = List.generate(
@@ -25,15 +37,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
   String? _selectedCategory;
   File? _selectedImage;
   bool _isLoading = false;
-  // List of available categories for the quiz.
-  final List<String> _categories = [
-    'Science',
-    'Math',
-    'History',
-    'Literature',
-    'Geography',
-    'General Knowledge',
-  ];
+  
   // Instance of ImagePicker to pick images from the gallery.
   final ImagePicker _picker = ImagePicker();
   // Dispose method to clean up controllers when the widget is removed from the widget tree.
@@ -46,34 +50,117 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
     super.dispose();
   }
 
-  Future<void> _submitQuiz() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      setState(() => _isLoading = true);
+Future<void> _loadCategories() async {
+    try {
+      // Fetch the categories asynchronously
+      final categories = await quizRepository.getAllCategories();
 
-      try {
-        // TODO: Implement quiz submission logic
-        await Future.delayed(
-            const Duration(seconds: 1)); // Simulate network delay
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Quiz added successfully!')),
-          );
-          _resetForm();
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error adding quiz: $e')),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() => _isLoading = false);
-        }
-      }
+      // If categories are loaded successfully, update the _categories list
+      setState(() {
+        _categories = categories.map((category) => category.categoryName).toList();
+      });
+    } catch (e) {
+      // Handle error (e.g., show a snackbar with the error message)
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load categories: $e')),
+      );
     }
   }
 
+Future<void> _submitQuiz() async {
+  if (_formKey.currentState?.validate() ?? false) {
+    setState(() => _isLoading = true);
+
+    try {
+      // Step 1: Collect data from the form fields.
+      String question = _quizQuestionController.text.trim();
+      String description = _quizDescriptionController.text.trim();
+      String answer1 = _optionControllers[0].text.trim();
+      String answer2 = _optionControllers[1].text.trim();
+      String answer3 = _optionControllers[2].text.trim();
+      String answer4 = _optionControllers[3].text.trim();
+      String correctAnswer = _correctAnswerController.text.trim();
+      String category = _selectedCategory ?? '';
+      String author = "Author Name"; // You can replace this with the current user's name if needed
+
+      // Step 2: Handle image upload if an image is selected.
+      String? imageUrl;
+      if (_selectedImage != null) {
+        // Upload the image to Firebase Storage (or another service) and get the URL.
+        imageUrl = await _uploadImage(_selectedImage!);
+      }
+
+      // Step 3: Create a new Quiz object.
+      Quiz newQuiz = Quiz(
+        quizId: "", // Firebase will generate the ID
+        category: category,
+        author: author,
+        description: description,
+        question: question,
+        answer1: answer1,
+        answer2: answer2,
+        answer3: answer3,
+        answer4: answer4,
+        correctAnswer: correctAnswer,
+        img: imageUrl,
+      );
+
+      // Step 4: Save the quiz to Firebase Firestore.
+      // Here we're assuming you have a Firestore collection for quizzes.
+      await quizRepository.addQuiz(newQuiz);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Quiz added successfully!')),
+        );
+        _resetForm(); // Reset the form after successful submission.
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error adding quiz: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+}
+
+// Helper method to upload an image to Firebase Storage and get the URL.
+Future<String?> _uploadImage(File image) async {
+  try {
+    // Ensure the file exists
+    if (!image.existsSync()) {
+      throw Exception('File does not exist at the specified path.');
+    }
+
+    // Reference to Firebase Storage with a unique path
+    final storageRef = FirebaseStorage.instance
+        .ref()
+        .child('quiz_images')
+        .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+    // Upload the image to Firebase Storage
+    final uploadTask = storageRef.putFile(image);
+
+    // Wait for the upload to complete and get the snapshot
+    final snapshot = await uploadTask;
+
+    // Retrieve the download URL
+    final downloadUrl = await snapshot.ref.getDownloadURL();
+    print('Image uploaded successfully: $downloadUrl');
+    return downloadUrl;
+  } catch (e) {
+    print('Error uploading image: $e');
+    return null;
+  }
+}
+  
+  
+  
   // Method to handle picking an image from the gallery.
   Future<void> _pickImage() async {
     try {

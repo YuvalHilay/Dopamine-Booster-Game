@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "989158188177",
     "project_id": "dopamine-game",
-    "storage_bucket": "dopamine-game.appspot.com"
+    "storage_bucket": "dopamine-game.firebasestorage.app"
   },
   "client": [
     {
@@ -12,7 +12,12 @@
           "package_name": "com.example.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "989158188177-hjk0bdkcqv9pl06g7vd4in0n43r03r7m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCT2OKGvF4ONR1kBQ9sXat7n_2W_ngRfm0"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "989158188177-hjk0bdkcqv9pl06g7vd4in0n43r03r7m.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "989158188177-na6jtfd6rl24g3qggtihcok1j0n0t06d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.google.firebase.presents.demo"
+              }
+            }
+          ]
         }
       }
     }

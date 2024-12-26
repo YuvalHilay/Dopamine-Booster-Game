@@ -14,74 +14,130 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  // Controllers
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  // Form states
   final _formKey = GlobalKey<FormState>();
   bool signInRequired = false;
   IconData iconPassword = CupertinoIcons.eye_fill;
   bool obscurePassword = true;
   String? _errorMsg;
+
   static const BoxShadow kBoxShadow = BoxShadow(
-    color: Colors.grey, // Shadow color
-    blurRadius: 8,      // Blurriness of the shadow
-    spreadRadius: 2,    // How far the shadow spreads
-    offset: Offset(0, 4), // Position offset of the shadow
-);
+    color: Colors.black12,
+    blurRadius: 8,
+    spreadRadius: 2,
+    offset: Offset(0, 4),
+  );
+
+  void _showForgotPasswordDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final TextEditingController resetEmailController =
+            TextEditingController();
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.forgotPassword),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(AppLocalizations.of(context)!.enterEmailForReset),
+              const SizedBox(height: 16),
+              MyTextField(
+                controller: resetEmailController,
+                hintText: AppLocalizations.of(context)!.email,
+                obscureText: false,
+                keyboardType: TextInputType.emailAddress,
+                prefixIcon: const Icon(CupertinoIcons.mail_solid),
+                validator: FormValidators.validateEmail,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: Text(AppLocalizations.of(context)!.cancel),
+              onPressed: () => Navigator.of(context).pop(),
+              style: TextButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                foregroundColor:
+                    Theme.of(context).colorScheme.primary, // Set the text color for the Cancel button
+              ),
+            ),
+            ElevatedButton(
+              child: Text(AppLocalizations.of(context)!.resetPassword),
+              onPressed: () {
+                if (FormValidators.validateEmail(resetEmailController.text) ==
+                    null) {
+                  // TODO: Implement password reset logic
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text(AppLocalizations.of(context)!
+                            .passwordResetEmailSent)),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.green, 
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
 
     return BlocListener<SignInBloc, SignInState>(
       listener: (context, state) {
         if (state is SignInSuccess) {
-          setState(() {
-            signInRequired = false;
-          });
+          setState(() => signInRequired = false);
         } else if (state is SignInProcess) {
-          setState(() {
-            signInRequired = true;
-          });
+          setState(() => signInRequired = true);
         } else if (state is SignInFailure) {
           setState(() {
             signInRequired = false;
-            _errorMsg = 'Invalid email or password';
+            _errorMsg = AppLocalizations.of(context)!.invalidEmailOrPassword;
           });
         }
       },
-      child: Container(
-        constraints: BoxConstraints(
-          maxHeight: 300, // Limit the height to avoid overflow
-          maxWidth: 440
-        ),
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [kBoxShadow],
-        ),
-        child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                // Email Field
-                SizedBox(width: width * 0.9,
-                    child: MyTextField(
-                        controller: emailController,
-                        hintText: AppLocalizations.of(context)!.email,
-                        obscureText: false,
-                        keyboardType: TextInputType.emailAddress,
-                        prefixIcon: const Icon(CupertinoIcons.mail_solid),
-                        errorMsg: _errorMsg,
-                        validator: FormValidators.validateEmail)),
-                const SizedBox(height: 10),
-                // Password Field
-                SizedBox(width: width * 0.9,
-                  child: MyTextField(
+      child: SingleChildScrollView(
+        child: Center(
+          child: Container(
+            constraints: const BoxConstraints(maxHeight: 410, maxWidth: 440),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: const [kBoxShadow],
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.welcomeBack,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.inversePrimary,
+                        ),
+                  ),
+                  const SizedBox(height: 10),
+                  MyTextField(
+                    controller: emailController,
+                    hintText: AppLocalizations.of(context)!.email,
+                    obscureText: false,
+                    keyboardType: TextInputType.emailAddress,
+                    prefixIcon: const Icon(CupertinoIcons.mail_solid),
+                    errorMsg: _errorMsg,
+                    validator: FormValidators.validateEmail,
+                  ),
+                  const SizedBox(height: 20),
+                  MyTextField(
                     controller: passwordController,
                     hintText: AppLocalizations.of(context)!.password,
                     obscureText: obscurePassword,
@@ -90,53 +146,70 @@ class _SignInScreenState extends State<SignInScreen> {
                     errorMsg: _errorMsg,
                     validator: FormValidators.validatePassword,
                     suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          obscurePassword = !obscurePassword;
-                          if (obscurePassword) {
-                            iconPassword = CupertinoIcons.eye_fill;
-                          } else {
-                            iconPassword = CupertinoIcons.eye_slash_fill;
-                          }
-                        });
-                      },
+                      onPressed: () => setState(() {
+                        obscurePassword = !obscurePassword;
+                        iconPassword = obscurePassword
+                            ? CupertinoIcons.eye_fill
+                            : CupertinoIcons.eye_slash_fill;
+                      }),
                       icon: Icon(iconPassword),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                !signInRequired
-                    ? SizedBox(
-                        width: width * 0.9,
-                        child: TextButton(
-                            onPressed: () {
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Directionality.of(context) == TextDirection.rtl
+                        ? Alignment.centerLeft
+                        : Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: _showForgotPasswordDialog,
+                      child: Text(
+                        AppLocalizations.of(context)!.forgotPassword,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.blue, // Set the text color to blue
+                          fontWeight: FontWeight.bold, // Make the text bold
+                          decoration:
+                              TextDecoration.underline, // Underline the text
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  SizedBox(
+                    width: width * 0.9,
+                    child: ElevatedButton(
+                      onPressed: signInRequired
+                          ? null
+                          : () {
                               if (_formKey.currentState!.validate()) {
                                 context.read<SignInBloc>().add(SignInRequired(
-                                    emailController.text,
-                                    passwordController.text));
+                                    emailController.text, passwordController.text));
                               }
                             },
-                            style: TextButton.styleFrom(
-                                elevation: 3.0,
-                                backgroundColor:Theme.of(context).colorScheme.inversePrimary,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(60))),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 25, vertical: 5),
-                              child: Text(
-                                AppLocalizations.of(context)!.loginBtn,
-                                textAlign: TextAlign.center,
-                                style:  TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.inversePrimary,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      child: signInRequired
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : Text(
+                              AppLocalizations.of(context)!.loginBtn,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
                               ),
-                            )),
-                      )
-                    : const CircularProgressIndicator(),
-              ],
-            )),
+                            ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -74,29 +74,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
           return;
         }
       },
-      child: Container(
-        constraints: BoxConstraints(
-            maxHeight: 420, // Limit the height to avoid overflow
-            maxWidth: 440),
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [kBoxShadow],
-        ),
-        child: Form(
-          key: _formKey,
-          child: Center(
-              child: Column(children: [
-            const SizedBox(height: 20),
-            // Display Form step
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: currentStep == 0
-                  ? _buildFormStepOne(context, width, height)
-                  : _buildFormStepTwo(context, width, height),
+      child: SingleChildScrollView(
+        child: Center(
+          child: Container(
+            constraints: BoxConstraints(
+                maxHeight: 420, // Limit the height to avoid overflow
+                maxWidth: 440),
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [kBoxShadow],
             ),
-          ])),
+            child: Form(
+              key: _formKey,
+              child: Center(
+                  child: Column(children: [
+                const SizedBox(height: 20),
+                // Display Form step
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: currentStep == 0
+                      ? _buildFormStepOne(context, width, height)
+                      : _buildFormStepTwo(context, width, height),
+                ),
+              ])),
+            ),
+          ),
         ),
       ),
     );
@@ -132,7 +136,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       const SizedBox(height: 10),
       // Gender Toggle
       _buildGenderToggle(),
-      const SizedBox(height: 10),
+      const SizedBox(height: 20),
       // "Next" button
       SizedBox(
         width: width * 0.9,
@@ -197,7 +201,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       const SizedBox(height: 10),
       // User Role Toggle
       _buildUserRoleToggle(),
-      const SizedBox(height: 5),
+      const SizedBox(height: 2),
       // Checkbox terms
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -244,25 +248,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
           ),
         ],
       ),
-      SizedBox(height: height * 0.01),
+      const SizedBox(height: 2),
       // Step 2 form buttons
       Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
         // Back Button
-        SizedBox(
-          width: width * 0.4,
-          child: _buildTextButton(
-            context: context,
-            label: AppLocalizations.of(context)!.backBtn,
-            onPressed: () {
-              setState(() {
-                currentStep = 0; // Move to Step 1
-              });
-            },
+        Expanded(
+          flex: 1,
+          child: Padding(
+            // Added padding for spacing between buttons
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: _buildTextButton(
+              context: context,
+              label: AppLocalizations.of(context)!.backBtn,
+              onPressed: () {
+                setState(() {
+                  currentStep = 0; // Move to Step 1
+                });
+              },
+            ),
           ),
         ),
         !signUpRequired
-            ? SizedBox(
-                width: width * 0.4,
+            ? Expanded( // Changed from SizedBox to Expanded
+        flex: 1, // Flex for equal distribution of space
+        child: Padding( // Added padding for spacing between buttons
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: _buildTextButton(
                   context: context,
                   label: AppLocalizations.of(context)!.registerBtn,
@@ -285,6 +295,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     }
                   },
                 ),
+        
+                ),
               )
             : const CircularProgressIndicator()
       ]),
@@ -301,16 +313,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
         onPressed: onPressed,
         style: TextButton.styleFrom(
             elevation: 3.0,
-            backgroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(60))),
+                borderRadius: BorderRadius.circular(30))),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 4),
           child: Text(
             label,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-                color: Colors.black, fontSize: 18, fontWeight: FontWeight.w600),
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 17,
+                fontWeight: FontWeight.w600),
           ),
         ));
   }
@@ -380,14 +394,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _buildPasswordRule(AppLocalizations.of(context)!.upperCase, containsUpperCase),
-          _buildPasswordRule(AppLocalizations.of(context)!.lowerCase, containsLowerCase),
+          _buildPasswordRule(
+              AppLocalizations.of(context)!.upperCase, containsUpperCase),
+          _buildPasswordRule(
+              AppLocalizations.of(context)!.lowerCase, containsLowerCase),
         ]),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildPasswordRule(AppLocalizations.of(context)!.oneNum, containsNumber),
-            _buildPasswordRule(AppLocalizations.of(context)!.minCharPass, contains8Length),
+            _buildPasswordRule(
+                AppLocalizations.of(context)!.oneNum, containsNumber),
+            _buildPasswordRule(
+                AppLocalizations.of(context)!.minCharPass, contains8Length),
           ],
         ),
       ],

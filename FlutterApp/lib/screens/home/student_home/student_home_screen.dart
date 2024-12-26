@@ -1,7 +1,7 @@
 import 'package:Dopamine_Booster/components/my_drawer.dart';
 import 'package:Dopamine_Booster/screens/auth/blocs/sign_in_bloc/bloc/sign_in_bloc.dart';
-import 'package:Dopamine_Booster/screens/home/categories_screen.dart';
-import 'package:Dopamine_Booster/screens/home/profile_screen.dart';
+import 'package:Dopamine_Booster/screens/home/student_home/categories_screen.dart';
+import 'package:Dopamine_Booster/screens/home/home_menu/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

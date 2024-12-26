@@ -71,9 +71,15 @@
     "lowerCase" : "1 אות קטנה", 
     "upperCase" : "1 אות גדולה", 
     "female" : "נקבה", 
+    "invalidEmailOrPassword" : "אימייל או סיסמה לא חוקיים", 
     "sendFeedback" : "שלח משוב", 
     "minCharPass" : "לפחות 8 תווים", 
     "game" : "משחק", 
+    "welcomeBack" : "ברוך הבא", 
+    "passwordResetEmailSent" : "דוא''ל לאיפוס סיסמה נשלח", 
+    "resetPassword" : "אפס סיסמה", 
+    "enterEmailForReset" : "הזן את האימייל שלך כדי לאפס את הסיסמה שלך", 
+    "forgotPassword" : "שכחת סיסמא", 
     "oneNum" : "1 ספרה", 
     "termsCheckBox" : "אני מסכים לתנאים וההגבלות"
 }

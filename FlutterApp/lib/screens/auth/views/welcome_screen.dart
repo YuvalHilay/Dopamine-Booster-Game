@@ -66,7 +66,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
                           children: [
                             const SizedBox(height: 40),
                             _buildLogo(),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 5),
                             Expanded(
                               child: FadeTransition(
                                 opacity: _fadeAnimation,

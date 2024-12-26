@@ -1,5 +1,4 @@
 import '../entities/entities.dart';
-import 'models.dart';
 
 class Quiz {
   String quizId;
@@ -12,6 +11,7 @@ class Quiz {
   String answer3;
   String answer4;
   String correctAnswer;
+  String? img; // Add the img property to store the URL of the image
 
 
   // Constructor to initialize the quiz object with required fields.
@@ -26,6 +26,7 @@ class Quiz {
     required this.answer3,
     required this.answer4,
     required this.correctAnswer,
+    this.img,
   });
 
   // Converts this [Quiz] instance into a [QuizEntity] for persistence, when saving user data to a database.
@@ -41,6 +42,7 @@ class Quiz {
       answer3: answer3,
       answer4: answer4,
       correctAnswer: correctAnswer,
+      img: img,
     );
   }
   // Creates a [Quiz] object from a [QuizEntity], when retrieving user data from a database.
@@ -55,7 +57,9 @@ class Quiz {
       answer2: entity.answer2,
       answer3: entity.answer3,
       answer4: entity.answer4,
-      correctAnswer: entity.correctAnswer);
+      correctAnswer: entity.correctAnswer,
+      img: entity.img,
+      );
   }
 
   @override

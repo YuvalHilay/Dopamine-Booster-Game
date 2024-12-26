@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -17,26 +17,19 @@ class FirebaseUserRepo implements UserRepository {
 
   @override
   // Stream of the currently authenticated user.
-  Stream<MyUser?> get user {
-    return _firebaseAuth.authStateChanges().asyncExpand((firebaseUser) async* {
+  Stream<MyUser> get user {
+    return _firebaseAuth.authStateChanges().asyncMap((User? firebaseUser) async {
       if (firebaseUser == null) {
-        yield MyUser.empty;
+        return MyUser.empty;
       } else {
-        try {
-          final userDoc = await usersCollection.doc(firebaseUser.uid).get();
-          if (userDoc.exists && userDoc.data() != null) {
-            yield MyUser.fromEntity(MyUserEntity.fromDocument(userDoc.data()!));
-          } else {
-            print(
-                'User document not found or data is null for UID: ${firebaseUser.uid}');
-            yield MyUser.empty;
-          }
-        } catch (e, stacktrace) {
-          print('Error in user stream: $e');
-          print(stacktrace);
-          yield MyUser.empty;
-        }
+        return await usersCollection
+          .doc(firebaseUser.uid)
+          .get()
+          .then((value) => MyUser.fromEntity(MyUserEntity.fromDocument(value.data()!)));
       }
+    }).handleError((error) {
+      print('Error in user stream: $error');
+      return MyUser.empty;
     });
   }
 
@@ -46,9 +39,25 @@ class FirebaseUserRepo implements UserRepository {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-credential') {
+        throw Exception('The supplied auth credential is incorrect, malformed or has expired.');
+      } else if (e.code == 'user-not-found') {
+        throw Exception('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        throw Exception('Wrong password provided for that user.');
+      } else {
+        throw Exception('An unknown error occurred.');
+      }
+    } on PlatformException catch (e) {
+      if (e.code == 'ERROR_INVALID_CREDENTIAL') {
+        throw Exception('The supplied auth credential is incorrect, malformed or has expired.');
+      } else {
+        throw Exception('An unknown platform error occurred.');
+      }
     } catch (e) {
-      log(e.toString());
-      rethrow;
+      print('Error signing in: $e');
+      throw Exception('An unknown error occurred.');
     }
   }
 

@@ -1,4 +1,4 @@
-import 'package:Dopamine_Booster/screens/home/quiz_screen.dart';
+import 'package:Dopamine_Booster/screens/home/student_home/quiz_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:quiz_repository/quiz.repository.dart';
@@ -10,53 +10,19 @@ class CategoriesScreen extends StatefulWidget {
   State<CategoriesScreen> createState() => _CategoriesScreenState();
 }
 
-// Dummy category data
-final dummyCategory = Category(
-  categoryId: '1',
-  categoryName: 'Math',
-  quizCount: '2',
-  quizzes: [
-    Quiz(
-      quizId: '1',
-      category: 'Math',
-      author: 'Sapir Cohen',
-      description: 'A simple question to test your general knowledge.',
-      question: 'What is the capital of France?',
-      answer1: 'Berlin',
-      answer2: 'Madrid',
-      answer3: 'Paris',
-      answer4: 'Rome',
-      correctAnswer: 'Paris',
-    ),
-    Quiz(
-      quizId: '2',
-      category: 'Math',
-      author: 'Anna Smith',
-      description: 'A question about the solar system.',
-      question: 'Which planet is known as the Red Planet?',
-      answer1: 'Earth',
-      answer2: 'Mars',
-      answer3: 'Jupiter',
-      answer4: 'Venus',
-      correctAnswer: 'Mars',
-    ),
-  ],
-  );
-
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  // Simulating data fetching from DB
-  Future<List<Category>> fetchCategories() async {
-    await Future.delayed(const Duration(seconds: 2)); // Simulate network delay
-    // Example categories data
-    return [
-      Category(categoryName: 'Science', quizCount: '5', categoryId: '', quizzes: []),
-      Category(categoryName: dummyCategory.categoryName, quizCount: dummyCategory.quizCount, categoryId: '' , quizzes: dummyCategory.quizzes),
-      Category(categoryName: 'English', quizCount: '3', categoryId: '', quizzes: []),
-      Category(categoryName: 'History', quizCount: '3', categoryId: '', quizzes: []),
-      Category(categoryName: 'Geography', quizCount: '7', categoryId: '', quizzes: []),
-    ];
-  }
+  final QuizRepository _quizRepository = FirebaseQuizRepo(); // Initialize the quiz repository
 
+// Fetch categories from the quiz repository
+  Future<List<Category>> fetchCategories() async {
+    try {
+      return await _quizRepository.getAllCategories();
+    } catch (e) {
+      print('Error fetching categories: $e');
+      return [];
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

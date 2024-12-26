@@ -303,6 +303,30 @@
     "@minCharPass": {
         "description": "Minimum 8 characters"
     },
+    "forgotPassword" : "Forgot Password", 
+    "@forgotPassword": {
+        "description": "LogoForgot Passwordut"
+    },
+    "enterEmailForReset" : "Enter your email to reset your password", 
+    "@enterEmailForReset": {
+        "description": "Enter your email to reset your password"
+    },
+    "invalidEmailOrPassword" : "Invalid email or password", 
+    "@invalidEmailOrPassword": {
+        "description": "Invalid email or password"
+    },
+    "resetPassword" : "Reset Password", 
+    "@resetPassword": {
+        "description": "Reset Password"
+    },
+    "passwordResetEmailSent" : "Password reset email has been sent", 
+    "@passwordResetEmailSent": {
+        "description": "Password reset email has been sent"
+    },
+    "welcomeBack" : "Welcome Back", 
+    "@welcomeBack": {
+        "description": "Welcome Back"
+    },
     "termsCheckBox" : "I agree to the terms and conditions",
     "@termsCheckBox": {
         "description": "I agree to the terms and conditions"

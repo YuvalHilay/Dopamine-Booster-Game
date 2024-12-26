@@ -1,5 +1,6 @@
 import 'package:Dopamine_Booster/components/my_drawer.dart';
 import 'package:Dopamine_Booster/screens/auth/blocs/sign_in_bloc/bloc/sign_in_bloc.dart';
+import 'package:Dopamine_Booster/screens/home/teacher_home/add_caterogies_screen.dart';
 import 'package:Dopamine_Booster/screens/home/teacher_home/add_quiz_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
     _pages = [
       const Placeholder(child: Center(child: Text('Home Page'))),
       const AddQuizScreen(),
-      const Placeholder(child: Center(child: Text('Add Catagory'))),
+      const AddCategoriesScreen(),
       const Placeholder(child: Center(child: Text('Profile'))),
     ];
   }
