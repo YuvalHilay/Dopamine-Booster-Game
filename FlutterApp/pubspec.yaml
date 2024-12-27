@@ -62,6 +62,7 @@ flutter:
   assets:
       - assets/images/
       - assets/categories/
+      - assets/categories/default_category.png
       - assets/app_icon.png
       - assets/flags/usa_flag.png
       - assets/flags/il_flag.png

@@ -89,9 +89,9 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
         showUnselectedLabels: true,
         items: [
           BottomNavigationBarItem(icon: const Icon(CupertinoIcons.home), label: AppLocalizations.of(context)!.home),
-          BottomNavigationBarItem(icon: Icon(CupertinoIcons.book), label: AppLocalizations.of(context)!.quizzes),
+          BottomNavigationBarItem(icon: const Icon(CupertinoIcons.book), label: AppLocalizations.of(context)!.quizzes),
           BottomNavigationBarItem(icon: const Icon(CupertinoIcons.gamecontroller), label: AppLocalizations.of(context)!.game),
-          BottomNavigationBarItem(icon: Icon(CupertinoIcons.profile_circled), label: AppLocalizations.of(context)!.profile),
+          BottomNavigationBarItem(icon: const Icon(CupertinoIcons.profile_circled), label: AppLocalizations.of(context)!.profile),
         ],
       ),
     );

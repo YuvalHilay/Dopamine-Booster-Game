@@ -9,6 +9,6 @@ void displayMessageToUser(String message, BuildContext context) {
     gravity: ToastGravity.SNACKBAR,
     backgroundColor: Colors.black54,
     textColor: Colors.white,
-    fontSize: 16.0,
+    fontSize: 17.0,
   );
 }

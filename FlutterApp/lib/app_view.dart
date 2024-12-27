@@ -26,8 +26,8 @@ class _MyAppViewState extends State<MyAppView> with WidgetsBindingObserver {
   // Default values for locale and theme
   Locale _locale = const Locale('en');
   bool _isDarkMode = false; // Default theme is Light Mode
-  bool _isSoundEnabled = true;
-  bool _isNotificationsEnabled = true;
+  bool _isSoundEnabled = true; // Default  sound is enabled 
+  bool _isNotificationsEnabled = true; // Default notifications are enabled
 
 
   @override

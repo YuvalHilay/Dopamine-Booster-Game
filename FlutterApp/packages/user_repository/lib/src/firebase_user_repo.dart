@@ -138,4 +138,15 @@ class FirebaseUserRepo implements UserRepository {
       //displayMessageToUser("google sign-in failed");
     }
   }
+
+  @override
+  // Sends a password reset email to the user with the provided [email].
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 }

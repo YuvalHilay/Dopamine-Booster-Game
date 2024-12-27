@@ -22,3 +22,10 @@ class SignInRequired extends SignInEvent {
 
 // SignOutRequired event is triggered when a user requests to sign out, no data just event trigger.
 class SignOutRequired extends SignInEvent {}
+
+class RestPasswordRequired extends SignInEvent {
+  final String email;
+
+  const RestPasswordRequired(this.email);
+
+}

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:Dopamine_Booster/components/my_textfield.dart';
+import 'package:Dopamine_Booster/components/popup_msg.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,7 +8,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:quiz_repository/quiz.repository.dart';
 
 class AddQuizScreen extends StatefulWidget {
-  const AddQuizScreen({Key? key}) : super(key: key);
+  final String authorName;
+  const AddQuizScreen({Key? key, required this.authorName}) : super(key: key);
 
   @override
   State<AddQuizScreen> createState() => _AddQuizScreenState();
@@ -25,7 +27,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
     _loadCategories();  // Load categories when the screen is initialized
   }
   final _formKey = GlobalKey<FormState>();
-  // List of controllers for the option fields (4 options in total).
+  // List of controllers for the option fields (4 answers options in total).
   final List<TextEditingController> _optionControllers = List.generate(
     4,
     (index) => TextEditingController(),
@@ -40,6 +42,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
   
   // Instance of ImagePicker to pick images from the gallery.
   final ImagePicker _picker = ImagePicker();
+  
   // Dispose method to clean up controllers when the widget is removed from the widget tree.
   @override
   void dispose() {
@@ -47,119 +50,105 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
       controller.dispose();
     }
     _correctAnswerController.dispose();
+    _quizDescriptionController.dispose();
+    _quizQuestionController.dispose();
     super.dispose();
   }
 
-Future<void> _loadCategories() async {
-    try {
-      // Fetch the categories asynchronously
-      final categories = await quizRepository.getAllCategories();
+  Future<void> _loadCategories() async {
+  try {
+    // Fetch the categories asynchronously
+    final categories = await quizRepository.getAllCategories();
 
-      // If categories are loaded successfully, update the _categories list
+    // Check if the widget is still mounted before calling setState
+    if (mounted) {
       setState(() {
         _categories = categories.map((category) => category.categoryName).toList();
       });
-    } catch (e) {
-      // Handle error (e.g., show a snackbar with the error message)
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load categories: $e')),
-      );
     }
-  }
-
-Future<void> _submitQuiz() async {
-  if (_formKey.currentState?.validate() ?? false) {
-    setState(() => _isLoading = true);
-
-    try {
-      // Step 1: Collect data from the form fields.
-      String question = _quizQuestionController.text.trim();
-      String description = _quizDescriptionController.text.trim();
-      String answer1 = _optionControllers[0].text.trim();
-      String answer2 = _optionControllers[1].text.trim();
-      String answer3 = _optionControllers[2].text.trim();
-      String answer4 = _optionControllers[3].text.trim();
-      String correctAnswer = _correctAnswerController.text.trim();
-      String category = _selectedCategory ?? '';
-      String author = "Author Name"; // You can replace this with the current user's name if needed
-
-      // Step 2: Handle image upload if an image is selected.
-      String? imageUrl;
-      if (_selectedImage != null) {
-        // Upload the image to Firebase Storage (or another service) and get the URL.
-        imageUrl = await _uploadImage(_selectedImage!);
-      }
-
-      // Step 3: Create a new Quiz object.
-      Quiz newQuiz = Quiz(
-        quizId: "", // Firebase will generate the ID
-        category: category,
-        author: author,
-        description: description,
-        question: question,
-        answer1: answer1,
-        answer2: answer2,
-        answer3: answer3,
-        answer4: answer4,
-        correctAnswer: correctAnswer,
-        img: imageUrl,
-      );
-
-      // Step 4: Save the quiz to Firebase Firestore.
-      // Here we're assuming you have a Firestore collection for quizzes.
-      await quizRepository.addQuiz(newQuiz);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Quiz added successfully!')),
-        );
-        _resetForm(); // Reset the form after successful submission.
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error adding quiz: $e')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-}
-
-// Helper method to upload an image to Firebase Storage and get the URL.
-Future<String?> _uploadImage(File image) async {
-  try {
-    // Ensure the file exists
-    if (!image.existsSync()) {
-      throw Exception('File does not exist at the specified path.');
-    }
-
-    // Reference to Firebase Storage with a unique path
-    final storageRef = FirebaseStorage.instance
-        .ref()
-        .child('quiz_images')
-        .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
-
-    // Upload the image to Firebase Storage
-    final uploadTask = storageRef.putFile(image);
-
-    // Wait for the upload to complete and get the snapshot
-    final snapshot = await uploadTask;
-
-    // Retrieve the download URL
-    final downloadUrl = await snapshot.ref.getDownloadURL();
-    print('Image uploaded successfully: $downloadUrl');
-    return downloadUrl;
   } catch (e) {
-    print('Error uploading image: $e');
-    return null;
+    if (mounted) { 
+      // Only display the message if the widget is still mounted
+      displayMessageToUser('Failed to load categories!', context);
+    }
   }
 }
-  
-  
+
+  Future<void> _submitQuiz() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      setState(() => _isLoading = true);
+
+      try {
+        // Handle image upload if an image is selected.
+        String? imageUrl;
+        if (_selectedImage != null) {
+          // Upload the image to Firebase Storage (or another service) and get the URL.
+          imageUrl = await _uploadImage(_selectedImage!);
+        }
+
+        // Collect data from the form fields and create a new Quiz object.
+        Quiz newQuiz = Quiz(
+          quizId: "", // Firebase will generate the ID
+          category: _selectedCategory ?? '',
+          author: widget.authorName, // Use the passed author name
+          description:  _quizDescriptionController.text.trim(),
+          question: _quizQuestionController.text.trim(),
+          answer1: _optionControllers[0].text.trim(),
+          answer2: _optionControllers[1].text.trim(),
+          answer3: _optionControllers[2].text.trim(),
+          answer4: _optionControllers[3].text.trim(),
+          correctAnswer: _correctAnswerController.text.trim(),
+          img: imageUrl,
+        );
+
+        // Save the quiz to Firebase Firestore.
+        await quizRepository.addQuiz(newQuiz);
+
+        if (mounted) {
+          displayMessageToUser(AppLocalizations.of(context)!.addQuizSuccess, context);
+          _resetForm(); // Reset the form after successful submission.
+        }
+      } catch (e) {
+        if (mounted) {
+          displayMessageToUser('Error adding quiz!', context);
+        }
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
+    }
+}
+
+  // Helper method to upload an image to Firebase Storage and get the URL.
+  Future<String?> _uploadImage(File image) async {
+    try {
+      // Ensure the file exists
+      if (!image.existsSync()) {
+        throw Exception('File does not exist at the specified path.');
+      }
+
+      // Reference to Firebase Storage with a unique path
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('quiz_images')
+          .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+      // Upload the image to Firebase Storage
+      final uploadTask = storageRef.putFile(image);
+
+      // Wait for the upload to complete and get the snapshot
+      final snapshot = await uploadTask;
+
+      // Retrieve the download URL
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+      print('Image uploaded successfully: $downloadUrl');
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
+  }
   
   // Method to handle picking an image from the gallery.
   Future<void> _pickImage() async {
@@ -188,6 +177,7 @@ Future<String?> _uploadImage(File image) async {
     for (var controller in _optionControllers) {
       controller.clear();
     }
+    _quizQuestionController.clear();
     _correctAnswerController.clear();
     _quizDescriptionController.clear();
     _selectedCategory = null;
@@ -245,7 +235,7 @@ Future<String?> _uploadImage(File image) async {
     return GestureDetector(
       onTap: _pickImage,
       child: Container(
-        height: 150,
+        height: 200,
         decoration: BoxDecoration(
           color: Colors.grey[200],
           borderRadius: BorderRadius.circular(12),
@@ -276,7 +266,7 @@ Future<String?> _uploadImage(File image) async {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text('Quiz Question:',
+          child: Text(AppLocalizations.of(context)!.quizQuestion,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -285,7 +275,7 @@ Future<String?> _uploadImage(File image) async {
         ),
         MyTextField(
           controller: _quizQuestionController,
-          hintText: 'Enter Quiz Question',
+          hintText: AppLocalizations.of(context)!.enterQuizQuest,
           obscureText: false,
           keyboardType: TextInputType.text,
           validator: (value) {

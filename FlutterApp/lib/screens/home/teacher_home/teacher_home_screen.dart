@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:Dopamine_Booster/components/logout_dialog.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TeacherHomeScreen extends StatefulWidget {
   final MyUser user;
@@ -19,7 +20,7 @@ class TeacherHomeScreen extends StatefulWidget {
 
 class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
   int _currentPageIndex = 0;
-
+  
   // List of pages for bottom navigation
   late final List<Widget> _pages;
 
@@ -28,7 +29,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
     super.initState();
     _pages = [
       const Placeholder(child: Center(child: Text('Home Page'))),
-      const AddQuizScreen(),
+      AddQuizScreen(authorName: '${widget.user.firstName} ${widget.user.lastName}'),
       const AddCategoriesScreen(),
       const Placeholder(child: Center(child: Text('Profile'))),
     ];
@@ -42,7 +43,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
       appBar: AppBar(
         title: Text(
           'Welcome ${widget.user.userRole}, ${widget.user.firstName} ${widget.user.lastName}',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
@@ -62,7 +63,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
               }
             },
             icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
+            tooltip: AppLocalizations.of(context)!.logout,
           ),
         ],
       ),
@@ -87,11 +88,11 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(CupertinoIcons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(CupertinoIcons.book), label: 'Add Quizzes'),
-          BottomNavigationBarItem(icon: Icon(CupertinoIcons.gamecontroller), label: 'Add Catagory'),
-          BottomNavigationBarItem(icon: Icon(CupertinoIcons.profile_circled), label: 'Profile'),
+        items: [
+          BottomNavigationBarItem(icon: const Icon(CupertinoIcons.home), label: AppLocalizations.of(context)!.home),
+          BottomNavigationBarItem(icon: const Icon(CupertinoIcons.book), label: AppLocalizations.of(context)!.addQuizBtn),
+          BottomNavigationBarItem(icon: const Icon(CupertinoIcons.gamecontroller), label: AppLocalizations.of(context)!.addCatergory),
+          BottomNavigationBarItem(icon: const Icon(CupertinoIcons.profile_circled), label: AppLocalizations.of(context)!.profile),
         ],
       ),
     );

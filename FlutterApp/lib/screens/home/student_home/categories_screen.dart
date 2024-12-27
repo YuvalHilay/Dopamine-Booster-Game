@@ -12,17 +12,17 @@ class CategoriesScreen extends StatefulWidget {
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
   final QuizRepository _quizRepository = FirebaseQuizRepo(); // Initialize the quiz repository
-
-// Fetch categories from the quiz repository
+  List<String> defCategoryNames = [ 'Sports', 'Science', 'History', 'Math', 'Geography', 'English'];
+  
+  // Fetch categories from the quiz repository
   Future<List<Category>> fetchCategories() async {
     try {
       return await _quizRepository.getAllCategories();
     } catch (e) {
-      print('Error fetching categories: $e');
       return [];
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,12 +64,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 crossAxisCount: 2, // Two columns
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
-                childAspectRatio: 1, // Adjust tile aspect ratio
+                childAspectRatio: 0.8, // Adjust tile aspect ratio
               ),
               itemCount: categories.length,
               itemBuilder: (context, index) {
                 final category = categories[index];
-                return CategoryTile(category: category);
+                return CategoryTile(category: category , defCategoryNames: defCategoryNames);
               },
             );
           },
@@ -81,8 +81,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
 class CategoryTile extends StatelessWidget {
   final Category category;
+  final List<String> defCategoryNames; 
 
-  const CategoryTile({Key? key, required this.category}) : super(key: key);
+  const CategoryTile({Key? key, required this.category, required this.defCategoryNames}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -105,21 +106,9 @@ class CategoryTile extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                'assets/categories/${category.categoryName.toLowerCase()}.png',
-                height: 130,
-                width: 110,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(
-                    Icons.broken_image,
-                    size: 100,
-                    color: Colors.grey,
-                  );
-                },
-              ),
+              child: _buildCategoryImage(),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height:10),
             Text(
               getLocalizedCategoryName(context, category.categoryName),
               style: const TextStyle(
@@ -129,12 +118,55 @@ class CategoryTile extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             Text(
-              '${category.quizCount} Quizzes',
+              AppLocalizations.of(context)!.quizCount(category.quizCount),
               style: const TextStyle(fontSize: 15, color: Colors.grey),
             ),
           ],
         ),
       ),
+    );
+  }
+  
+  Widget _buildCategoryImage() {
+  // Check if the category name is in the predefined list of category names
+  if (defCategoryNames.contains(category.categoryName)) {
+    // If it is, attempt to load the category-specific image
+    return Image.asset(
+      'assets/categories/${category.categoryName.toLowerCase()}.png',
+      height: 150,
+      width: 150,
+      fit: BoxFit.fill,
+      errorBuilder: (context, error, stackTrace) {
+        // If the category-specific image fails to load, use the default image
+        return _buildDefaultImage();
+      },
+    );
+  } else {
+    // If the category name is not in the predefined list, use the default image
+    return _buildDefaultImage();
+  }
+}
+
+  Widget _buildDefaultImage() {
+    // Attempt to load the default category image
+    return Image.asset(
+      'assets/categories/default_category.png',
+      height: 150,
+      width: 150,
+      fit: BoxFit.fill,
+      errorBuilder: (context, error, stackTrace) {
+        // If the default image fails to load, show a fallback icon
+        return Container(
+          height: 130,
+          width: 110,
+          color: Colors.grey[300],
+          child: const Icon(
+            Icons.category,
+            size: 50,
+            color: Colors.grey,
+          ),
+        );
+      },
     );
   }
 

@@ -99,6 +99,14 @@
     "@category": {
         "description": "Category"
     },
+    "addNewCat" : "Add New Category", 
+    "@addNewCat": {
+        "description": "Add New Category"
+    },
+    "enterCat" : "Enter category name", 
+    "@enterCat": {
+        "description": "Enter category name"
+    },
     "corrAns" : "Correct Answer", 
     "@corrAns": {
         "description": "Correct Answer"
@@ -114,6 +122,14 @@
     "profile" : "Profile", 
     "@profile": {
         "description": "Profile"
+    },
+    "delete" : "Delete", 
+    "@delete": {
+        "description": "Delete"
+    },
+    "deleteCategory" : "Delete Category", 
+    "@deleteCategory": {
+        "description": "Delete Category"
     },
     "contact" : "Contact", 
     "@contact": {
@@ -251,6 +267,14 @@
     "@sport": {
         "description": "Sport"
     },
+    "add" : "Add", 
+    "@add": {
+        "description": "Add"
+    },
+    "deleteCateMsg" : "Are you sure you want to delete {category}?", 
+    "@deleteCateMsg": {
+        "description": "Are you sure you want to delete {category}?"
+    },
     "history" : "History", 
     "@history": {
         "description": "History"
@@ -326,6 +350,46 @@
     "welcomeBack" : "Welcome Back", 
     "@welcomeBack": {
         "description": "Welcome Back"
+    },
+    "quizDescRes" : "Quiz Description: {description}.", 
+    "@quizDescRes": {
+        "description": "Quiz Description: {description}."
+    },
+    "authorBy" : "Author by {author}.", 
+    "@authorBy": {
+        "description": "Author by {author}."
+    },
+    "quizCount" : "{quizCount} Quizzes", 
+    "@quizCount": {
+        "description": "{quizCount} Quizzes"
+    },
+    "backCat" : "Back to Categories", 
+    "@backCat": {
+        "description": "Back to Categories"
+    },
+    "tryAgain" : "Try Again", 
+    "@tryAgain": {
+        "description": "Try Again"
+    },
+    "quizComplete" : "Quiz Completed!", 
+    "@quizComplete": {
+        "description": "Quiz Completed!"
+    },
+    "enterQuizQuest" : "Enter Quiz Question", 
+    "@enterQuizQuest": {
+        "description": "Enter Quiz Question"
+    },
+    "quizQuestion" : "Quiz Question:", 
+    "@quizQuestion": {
+        "description": "Quiz Question:"
+    },
+    "addCatergory" : "Add Catagory", 
+    "@addCatergory": {
+        "description": "Add Catagory"
+    },
+    "signInWithGoogle" : "Sign in with Google", 
+    "@signInWithGoogle": {
+        "description": "Sign in with Google"
     },
     "termsCheckBox" : "I agree to the terms and conditions",
     "@termsCheckBox": {

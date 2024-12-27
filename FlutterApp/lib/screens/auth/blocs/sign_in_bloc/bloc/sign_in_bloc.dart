@@ -23,5 +23,8 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     });
     // Handles the SignOutRequired event to initiate the sign-out process.
     on<SignOutRequired>((event, emit) async => await _userRepository.logOut());
+
+    // Handles the SignOutRequired event to initiate the sign-out process.
+    on<RestPasswordRequired>((event, emit) async => await _userRepository.sendPasswordResetEmail(event.email));
   }
 }

@@ -1,5 +1,7 @@
+import 'package:Dopamine_Booster/components/popup_msg.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz_repository/quiz.repository.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
 class AddCategoriesScreen extends StatefulWidget {
@@ -28,10 +30,7 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
         categories = loadedCategories;
       });
     } catch (e) {
-      // Handle error (e.g., show a snackbar with the error message)
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load categories: $e')),
-      );
+      displayMessageToUser('Failed to load categories!', context);
     }
   }
 
@@ -40,21 +39,21 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('Add New Category'),
+        title: Text(AppLocalizations.of(context)!.addNewCat),
         content: TextField(
           controller: _categoryNameController,
-          decoration: const InputDecoration(hintText: "Enter category name"),
+          decoration:  InputDecoration(hintText: AppLocalizations.of(context)!.enterCat),
         ),
         actions: <Widget>[
           TextButton(
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
             onPressed: () => Navigator.of(context).pop(),
             style: TextButton.styleFrom(
               foregroundColor: Colors.black, // Set the desired color for the Cancel button
             ),
           ),
           TextButton(
-            child: const Text('Add'),
+            child: Text(AppLocalizations.of(context)!.add),
             onPressed: () => Navigator.of(context).pop(_categoryNameController.text),
             style: TextButton.styleFrom(
               foregroundColor: Colors.green, // Set the desired color for the Add button
@@ -76,9 +75,7 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
         await quizRepository.addCategory(newCategory);
         _loadCategories(); // Reload categories to reflect the change
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add category: $e')),
-        );
+        displayMessageToUser('Failed to add category!', context);
       }
     }
     _categoryNameController.clear();
@@ -87,20 +84,20 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
   Future<void> _deleteCategory(Category category) async {
     final confirmed = await showDialog<bool>(
   context: context,
-  builder: (BuildContext context) {
+  builder: (BuildContext context) {  
     return AlertDialog(
-      title: const Text('Delete Category'),
-      content: Text('Are you sure you want to delete "${category.categoryName}"?'),
+      title: Text(AppLocalizations.of(context)!.deleteCategory),
+      content: Text(AppLocalizations.of(context)!.deleteCateMsg(category.categoryName)),
       actions: <Widget>[
         TextButton(
-          child: const Text('Cancel'),
+          child:  Text(AppLocalizations.of(context)!.cancel),
           onPressed: () => Navigator.of(context).pop(false),
           style: TextButton.styleFrom(
             foregroundColor: Colors.black, // Set the desired color for the Cancel button
           ),
         ),
         TextButton(
-          child: const Text('Delete'),
+          child: Text(AppLocalizations.of(context)!.delete),
           onPressed: () => Navigator.of(context).pop(true),
           style: TextButton.styleFrom(
             foregroundColor: Colors.red, // Set the desired color for the Delete button
@@ -116,9 +113,7 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
         await quizRepository.deleteCategory(category.categoryId);
         _loadCategories(); // Reload categories to reflect the change
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to delete category: $e')),
-        );
+        displayMessageToUser('Failed to delete category!', context);
       }
     }
   }
@@ -127,7 +122,7 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Categories'),
+        title: Text(AppLocalizations.of(context)!.categories),
         centerTitle: true,
       ),
       body: ListView.builder(
@@ -141,7 +136,7 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
                 backgroundColor: Theme.of(context).primaryColor,
                 child: Text(
                   categories[index].categoryName[0].toUpperCase(),
-                  style: const TextStyle(color: Colors.white),
+                  style:  TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
                 ),
               ),
               title: Text(categories[index].categoryName),
@@ -153,11 +148,10 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
                     icon: const Icon(Icons.delete, color: Colors.red, size: 20),
                     onPressed: () => _deleteCategory(categories[index]),
                   ),
-                  const Icon(Icons.arrow_forward_ios),
                 ],
               ),
               onTap: () {
-                // TODO: Navigate to category detail or quiz list
+                // TODO: Future Navigate to category detail or quiz list
               },
             ),
           );
@@ -167,7 +161,7 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
         onPressed: _addCategory,
          backgroundColor: Theme.of(context).colorScheme.inversePrimary, // Replace with your custom color
         child: const Icon(Icons.add),
-        tooltip: 'Add New Category',
+        tooltip: AppLocalizations.of(context)!.addNewCat,
       ),
     );
   }

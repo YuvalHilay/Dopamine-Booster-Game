@@ -39,11 +39,16 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
   }
 
   void toggleScreen() {
+    if (mounted) {
     setState(() {
       isSignIn = !isSignIn;
+    });
+    // Delay state change to allow animation to complete
+    Future.delayed(const Duration(milliseconds: 300), () {
       _animationController.reset();
       _animationController.forward();
     });
+  }
   }
 
   @override
@@ -200,7 +205,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
           isSignIn
               ? AppLocalizations.of(context)!.noAcc
               : AppLocalizations.of(context)!.haveAcc,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
         ),
         TextButton(
           onPressed: toggleScreen,
@@ -208,10 +213,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
             isSignIn
                 ? AppLocalizations.of(context)!.regsHere
                 : AppLocalizations.of(context)!.loginHere,
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.yellow[300],
-            ),
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.yellow[300], fontWeight: FontWeight.bold),
           ),
         ),
       ],
@@ -221,15 +223,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
   Widget _buildDivider() {
     return Row(
       children: [
-        Expanded(child: Divider(color: Colors.white.withOpacity(0.5))),
+        Expanded(child: Divider(color: Colors.white.withOpacity(0.9))),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
             AppLocalizations.of(context)!.signupWith,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white),
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
           ),
         ),
-        Expanded(child: Divider(color: Colors.white.withOpacity(0.5))),
+        Expanded(child: Divider(color: Colors.white.withOpacity(0.9))),
       ],
     );
   }
@@ -252,11 +254,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> with SingleTickerProvider
       child: ElevatedButton.icon(
         onPressed: () {
           // Implement Google Sign-In logic
+          context.read<AuthenticationBloc>().userRepository.signInWithGoogle();
         },
         icon: const FaIcon(FontAwesomeIcons.google, color: Colors.white),
         label: Text(
-          "sign with google",
-          style: const TextStyle(color: Colors.white),
+          AppLocalizations.of(context)!.signInWithGoogle,
+          style: const TextStyle(color: Colors.white, fontSize: 16.5, fontWeight: FontWeight.bold),
         ),
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,

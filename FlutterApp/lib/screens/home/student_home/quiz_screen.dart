@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:Dopamine_Booster/components/popup_msg.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz_repository/quiz.repository.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class QuizScreen extends StatefulWidget {
   final Category category;
@@ -37,24 +39,20 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
     _loadQuizzes(); // Load quizzes for the selected category
   }
 
- Future<void> _loadQuizzes() async {
-  try {
-    List<Quiz> quizzes = await quizRepository.getQuizzesByCategory(widget.category.categoryId);
-    debugPrint('Loaded quizzes: ${quizzes.length}');
-    setState(() {
-      _quizzes = quizzes;
-      _isLoading = false;
-    });
-  } catch (e) {
-    debugPrint('Error loading quizzes: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to load quizzes: $e')),
-    );
-    setState(() {
-      _isLoading = false;
-    });
+  Future<void> _loadQuizzes() async {
+    try {
+      List<Quiz> quizzes = await quizRepository.getQuizzesByCategory(widget.category.categoryId);
+      setState(() {
+        _quizzes = quizzes;
+        _isLoading = false;
+      });
+    } catch (e) {
+      displayMessageToUser('Failed to load quizzes!', context);
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
-}
 
   @override
   void dispose() {
@@ -79,7 +77,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
     Timer(const Duration(seconds: 2), () {
       if (_currentQuizIndex < _quizzes.length - 1) {
         _pageController.nextPage(
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 250),
           curve: Curves.easeInOut,
         );
         setState(() {
@@ -96,43 +94,44 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
 
   void _showResults() {
     showDialog(
-  context: context,
-  barrierDismissible: false,
-  builder: (BuildContext context) {
-    return AlertDialog(
-      title: const Text('Quiz Completed!'),
-      content: Text('Your score: $_score / ${_quizzes.length}'),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('Try Again'),
-          onPressed: () {
-            Navigator.of(context).pop();
-            setState(() {
-              _currentQuizIndex = 0;
-              _score = 0;
-              _answered = false;
-              _selectedAnswer = null;
-            });
-            _pageController.jumpToPage(0);
-          },
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.blue, // Set the desired color for the Try Again button
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(AppLocalizations.of(context)!.quizComplete),
+        content: Text('Your score: $_score / ${_quizzes.length}'),
+        actions: <Widget>[
+          TextButton(
+            child: Text(AppLocalizations.of(context)!.tryAgain),
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {
+                _currentQuizIndex = 0;
+                _score = 0;
+                _answered = false;
+                _selectedAnswer = null;
+              });
+              _pageController.jumpToPage(0);
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.blue, // Set the desired color for the Try Again button
+            ),
           ),
-        ),
-        TextButton(
-          child: const Text('Back to Categories'),
-          onPressed: () {
-            Navigator.of(context).pop();
-            Navigator.of(context).pop();
-          },
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.green, // Set the desired color for the Back to Categories button
+          TextButton(
+            child: Text(AppLocalizations.of(context)!.backCat),
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.green, // Set the desired color for the Back to Categories button
+            ),
           ),
-        ),
-      ],
+        ],
+      );
+    } ,
     );
-  },
-);}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -216,14 +215,16 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
           const SizedBox(height: 24),
           ..._buildAnswerButtons(quiz),
           const SizedBox(height: 16),
+          // Add the quiz description
           Text(
-            'Author: ${quiz.author}',
-            style: Theme.of(context).textTheme.bodySmall,
+            AppLocalizations.of(context)!.quizDescRes(quiz.description),
+            style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
+          // add the author of the quiz
           Text(
-            'Quiz Description: ${quiz.description}',
+            AppLocalizations.of(context)!.quizDescRes(quiz.author),
             style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
