@@ -279,6 +279,10 @@
     "@history": {
         "description": "History"
     },
+    "searchCategories" : "Search Categories", 
+    "@searchCategories": {
+        "description": "Search Categories"
+    },
     "geography" : "Geography", 
     "@geography": {
         "description": "Geography"
@@ -390,6 +394,34 @@
     "signInWithGoogle" : "Sign in with Google", 
     "@signInWithGoogle": {
         "description": "Sign in with Google"
+    },
+    "leaderboard" : "Leaderboard", 
+    "@leaderboard": {
+        "description": "Leaderboard"
+    },
+    "changeAvatar" : "Change Avatar", 
+    "@changeAvatar": {
+        "description": "Change Avatar"
+    },
+    "achievements" : "Achievements", 
+    "@achievements": {
+        "description": "Achievements"
+    },
+    "chooseAvatar" : "Choose Your Avatar", 
+    "@chooseAvatar": {
+        "description": "Choose Your Avatar"
+    },
+    "welcomeUser" : "Welcome {user},", 
+    "@welcomeUser": {
+        "description": "Welcome {user},"
+    },
+    "leaderboardMsg" : "See how you compare with others!", 
+    "@leaderboardMsg": {
+        "description": "See how you compare with others!"
+    },
+    "achievementsMsg" : "Unlock badges as you progress!", 
+    "@achievementsMsg": {
+        "description": "Unlock badges as you progress!"
     },
     "termsCheckBox" : "I agree to the terms and conditions",
     "@termsCheckBox": {

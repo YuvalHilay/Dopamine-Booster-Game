@@ -5,6 +5,7 @@ import 'student_home/student_home_screen.dart';
 import 'teacher_home/teacher_home_screen.dart';
 
 class HomeScreenController {
+  
   static Widget getHomeScreen(MyUser? user) {
     if (user == null) {
       return _buildErrorScreen('User not found');

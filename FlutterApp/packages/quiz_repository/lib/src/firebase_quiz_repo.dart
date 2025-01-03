@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:quiz_repository/quiz.repository.dart';
@@ -18,30 +17,10 @@ class FirebaseQuizRepo implements QuizRepository {
     _categoriesCollection = _firestore.collection('categories');
   }
 
-
-  Future<String> _uploadImageToStorage(String filePath, String fileName) async {
-    try {
-      final file = File(filePath);
-      final storageRef = _firebaseStorage.ref().child('quiz_images/$fileName');
-      final uploadTask = await storageRef.putFile(file);
-      return await uploadTask.ref.getDownloadURL();
-    } catch (e) {
-      log('Error uploading image: ${e.toString()}');
-      throw Exception('Failed to upload image to Firebase Storage');
-    }
-  }
-
   @override
   // Adds a new quiz to Firestore and updates the related category
   Future<void> addQuiz(Quiz quiz) async {
     try {
-      String? imageUrl;
-/*
-      // Check if the quiz includes an image and upload it
-      if (quiz.img != null) {
-        final fileName = '${DateTime.now().millisecondsSinceEpoch}_${quiz.img!.split('/').last}';
-        imageUrl = await _uploadImageToStorage(quiz.img!, fileName);
-      }*/
       // Create a new quiz document with a unique ID
       DocumentReference quizDoc = await _quizzesCollection.add({
         'category': quiz.category,

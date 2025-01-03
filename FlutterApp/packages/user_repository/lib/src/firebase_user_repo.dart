@@ -35,31 +35,31 @@ class FirebaseUserRepo implements UserRepository {
 
   @override
   // Signs in the user with the provided [email] and [password].
-  Future<void> signIn(String email, String password) async {
-    try {
-      await _firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalid-credential') {
-        throw Exception('The supplied auth credential is incorrect, malformed or has expired.');
-      } else if (e.code == 'user-not-found') {
-        throw Exception('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        throw Exception('Wrong password provided for that user.');
-      } else {
-        throw Exception('An unknown error occurred.');
-      }
-    } on PlatformException catch (e) {
-      if (e.code == 'ERROR_INVALID_CREDENTIAL') {
-        throw Exception('The supplied auth credential is incorrect, malformed or has expired.');
-      } else {
-        throw Exception('An unknown platform error occurred.');
-      }
-    } catch (e) {
-      print('Error signing in: $e');
-      throw Exception('An unknown error occurred.');
+Future<void> signIn(String email, String password) async {
+  try {
+    // Attempt to sign in using Firebase Auth
+    await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+  } on FirebaseAuthException catch (e) {
+    log('FirebaseAuthException: ${e.code} - ${e.message}');
+    // Handle Firebase-specific errors with meaningful messages
+    switch (e.code) {
+      case 'invalid-email':
+        throw Exception('The email address is not valid.');
+      case 'user-not-found':
+        throw Exception('No user found for the provided email.');
+      case 'wrong-password':
+        throw Exception('The password is incorrect.');
+      case 'user-disabled':
+        throw Exception('This user account has been disabled.');
+      default:
+        throw Exception('Authentication error: ${e.message}');
     }
+  } catch (e) {
+    // Catch any unexpected errors
+    log('Unknown error in signIn: $e');
+    throw Exception('An unknown error occurred: $e');
   }
+}
 
   @override
   Future<MyUser> signUp(MyUser myUser, String password) async {
@@ -148,5 +148,6 @@ class FirebaseUserRepo implements UserRepository {
       rethrow;
     }
   }
-
 }
+
+

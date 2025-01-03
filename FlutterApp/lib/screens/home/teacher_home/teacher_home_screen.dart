@@ -1,7 +1,10 @@
+import 'package:Dopamine_Booster/components/app_bar.dart';
 import 'package:Dopamine_Booster/components/my_drawer.dart';
 import 'package:Dopamine_Booster/screens/auth/blocs/sign_in_bloc/bloc/sign_in_bloc.dart';
-import 'package:Dopamine_Booster/screens/home/teacher_home/add_caterogies_screen.dart';
-import 'package:Dopamine_Booster/screens/home/teacher_home/add_quiz_screen.dart';
+import 'package:Dopamine_Booster/screens/home/home_menu/profile_screen.dart';
+import 'package:Dopamine_Booster/screens/home/teacher_home/add_caterogies_page.dart';
+import 'package:Dopamine_Booster/screens/home/teacher_home/add_quiz_page.dart';
+import 'package:Dopamine_Booster/screens/home/teacher_home/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,10 +31,10 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
   void initState() {
     super.initState();
     _pages = [
-      const Placeholder(child: Center(child: Text('Home Page'))),
+      HomeScreen(),
       AddQuizScreen(authorName: '${widget.user.firstName} ${widget.user.lastName}'),
       const AddCategoriesScreen(),
-      const Placeholder(child: Center(child: Text('Profile'))),
+      const ProfileScreen(),
     ];
   }
 
@@ -40,33 +43,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        title: Text(
-          'Welcome ${widget.user.userRole}, ${widget.user.firstName} ${widget.user.lastName}',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 19),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        elevation: 0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(CupertinoIcons.bars),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              final shouldLogout = await showLogoutDialog(context);
-              if (shouldLogout) {
-                // Perform the sign-out logic
-                BlocProvider.of<SignInBloc>(context).add(SignOutRequired());
-              }
-            },
-            icon: const Icon(Icons.logout),
-            tooltip: AppLocalizations.of(context)!.logout,
-          ),
-        ],
-      ),
+      appBar: MainAppBar(context: context, user: widget.user),
       drawer: const MyDrawer(),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),

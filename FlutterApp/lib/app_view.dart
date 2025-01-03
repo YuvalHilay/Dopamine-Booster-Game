@@ -49,7 +49,7 @@ class _MyAppViewState extends State<MyAppView> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // Detect app closure
-    if (state == AppLifecycleState.detached || state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.detached ) {
       _logOut();
     }
     super.didChangeAppLifecycleState(state);

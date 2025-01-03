@@ -31,7 +31,7 @@ class _ContactScreenState extends State<ContactScreen> {
     if (_formKey.currentState!.validate()) {
       final Uri emailLaunchUri = Uri(
         scheme: 'mailto',
-        path: 'example@gmail.com',
+        path: 'dopamineboosterapp@gmail.com',
         query: encodeQueryParameters(<String, String>{
           'subject': 'Dopamine Booster App Feedback',
           'body': 'Name: ${_nameController.text}\n'
@@ -39,23 +39,24 @@ class _ContactScreenState extends State<ContactScreen> {
               'Message: ${_messageController.text}',
         }),
       );
-      // Launch the email client if possible.
-      if (await canLaunch(emailLaunchUri.toString())) {
-        await launch(emailLaunchUri.toString());
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not launch email client')),
-        );
-      }
+    // ignore: deprecated_member_use
+    // Launch the email client if possible.
+    if (await canLaunchUrl(emailLaunchUri)) {
+      await launchUrl(emailLaunchUri);
+    } else {
+      print('Could not launch: $emailLaunchUri');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not launch email client')),
+      );
     }
   }
+}
   // Encodes query parameters for the mailto URI.
   String? encodeQueryParameters(Map<String, String> params) {
     return params.entries
-        .map((e) =>
-            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-        .join('&');
-  }
+      .map((MapEntry<String, String> e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+      .join('&');
+}
 
   @override
   Widget build(BuildContext context) {

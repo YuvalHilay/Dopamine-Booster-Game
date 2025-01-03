@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'logout_dialog.dart';
+
 class MyDrawer extends StatelessWidget {
   const MyDrawer({Key? key}) : super(key: key);
 
@@ -113,12 +115,15 @@ class MyDrawer extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.error,
           minimumSize: const Size(double.infinity, 50),
         ),
-        onPressed: () {
-          BlocProvider.of<SignInBloc>(context).add(SignOutRequired());
+        onPressed: () async {
+          final shouldLogout = await showLogoutDialog(context);
+          if (shouldLogout) {
+            // Perform the sign-out logic
+            BlocProvider.of<SignInBloc>(context).add(SignOutRequired());
+          }
           Navigator.pop(context);
         },
       ),
     );
   }
 }
-

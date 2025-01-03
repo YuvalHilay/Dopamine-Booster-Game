@@ -1,20 +1,26 @@
-import 'package:Dopamine_Booster/screens/home/student_home/quiz_screen.dart';
+import 'package:Dopamine_Booster/components/categories_bar.dart';
+import 'package:Dopamine_Booster/screens/home/student_home/quiz_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:quiz_repository/quiz.repository.dart';
-
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({Key? key}) : super(key: key);
 
   @override
   State<CategoriesScreen> createState() => _CategoriesScreenState();
 }
-
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  final QuizRepository _quizRepository = FirebaseQuizRepo(); // Initialize the quiz repository
-  List<String> defCategoryNames = [ 'Sports', 'Science', 'History', 'Math', 'Geography', 'English'];
-  
-  // Fetch categories from the quiz repository
+  final QuizRepository _quizRepository = FirebaseQuizRepo();
+  List<String> defCategoryNames = [
+    'Sports',
+    'Science',
+    'History',
+    'Math',
+    'Geography',
+    'English'
+  ];
+  String _searchQuery = '';
+ 
   Future<List<Category>> fetchCategories() async {
     try {
       return await _quizRepository.getAllCategories();
@@ -23,24 +29,34 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     }
   }
 
+  String getLocalizedCategoryName(BuildContext context, String categoryName) {
+    switch (categoryName) {
+      case 'Sports':
+        return AppLocalizations.of(context)!.sport;
+      case 'Science':
+        return AppLocalizations.of(context)!.science;
+      case 'History':
+        return AppLocalizations.of(context)!.history;
+      case 'Math':
+        return AppLocalizations.of(context)!.math;
+      case 'Geography':
+        return AppLocalizations.of(context)!.geography;
+      case 'English':
+        return AppLocalizations.of(context)!.english;
+      default:
+        return categoryName;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title:Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.category, size: 32),
-            const SizedBox(width: 10), 
-            Text(
-              AppLocalizations.of(context)!.categories,
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+      appBar: CategoriesBar(
+        onSearchChanged: (newQuery) {
+          setState(() {
+            _searchQuery = newQuery;
+          });
+        },
       ),
       body: SafeArea(
         child: FutureBuilder<List<Category>>(
@@ -57,19 +73,29 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             }
 
             final categories = snapshot.data!;
+            final filteredCategories = categories
+                .where((category) => category.categoryName
+                    .toLowerCase()
+                    .contains(_searchQuery))
+                .toList();
 
             return GridView.builder(
               padding: const EdgeInsets.all(16),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // Two columns
+                crossAxisCount: 2,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
-                childAspectRatio: 0.8, // Adjust tile aspect ratio
+                childAspectRatio: 0.7,
               ),
-              itemCount: categories.length,
+              itemCount: filteredCategories.length,
               itemBuilder: (context, index) {
-                final category = categories[index];
-                return CategoryTile(category: category , defCategoryNames: defCategoryNames);
+                final category = filteredCategories[index];
+                return CategoryTile(
+                  category: category,
+                  defCategoryNames: defCategoryNames,
+                  searchQuery: _searchQuery,
+                  getLocalizedCategoryName: (context, categoryName) => categoryName,
+                );
               },
             );
           },
@@ -81,15 +107,25 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
 class CategoryTile extends StatelessWidget {
   final Category category;
-  final List<String> defCategoryNames; 
+  final List<String> defCategoryNames;
+  final String searchQuery;
+  final String Function(BuildContext, String) getLocalizedCategoryName;
 
-  const CategoryTile({Key? key, required this.category, required this.defCategoryNames}) : super(key: key);
+  const CategoryTile({
+    Key? key,
+    required this.category,
+    required this.defCategoryNames,
+    required this.searchQuery,
+    required this.getLocalizedCategoryName,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final localizedCategoryName =
+        getLocalizedCategoryName(context, category.categoryName);
+
     return GestureDetector(
       onTap: () {
-        // Navigate to quiz screen for the selected category
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -99,6 +135,7 @@ class CategoryTile extends StatelessWidget {
       },
       child: Card(
         elevation: 4,
+        color: Theme.of(context).colorScheme.primary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -108,57 +145,58 @@ class CategoryTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               child: _buildCategoryImage(),
             ),
-            const SizedBox(height:10),
+            const SizedBox(height: 10),
             Text(
-              getLocalizedCategoryName(context, category.categoryName),
+              localizedCategoryName,
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 5),
             Text(
               AppLocalizations.of(context)!.quizCount(category.quizCount),
-              style: const TextStyle(fontSize: 15, color: Colors.grey),
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ],
         ),
       ),
     );
   }
-  
+
   Widget _buildCategoryImage() {
-  // Check if the category name is in the predefined list of category names
-  if (defCategoryNames.contains(category.categoryName)) {
-    // If it is, attempt to load the category-specific image
-    return Image.asset(
-      'assets/categories/${category.categoryName.toLowerCase()}.png',
-      height: 150,
-      width: 150,
-      fit: BoxFit.fill,
-      errorBuilder: (context, error, stackTrace) {
-        // If the category-specific image fails to load, use the default image
-        return _buildDefaultImage();
-      },
-    );
-  } else {
-    // If the category name is not in the predefined list, use the default image
-    return _buildDefaultImage();
+    String? matchingName;
+    for (String defName in defCategoryNames) {
+      if (category.categoryName.contains(defName)) {
+        matchingName = defName;
+        break;
+      }
+    }
+    if (matchingName != null) {
+      return Image.asset(
+        'assets/categories/${matchingName.toLowerCase()}.png',
+        height: 130,
+        width: 130,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildDefaultImage();
+        },
+      );
+    } else {
+      return _buildDefaultImage();
+    }
   }
-}
 
   Widget _buildDefaultImage() {
-    // Attempt to load the default category image
     return Image.asset(
       'assets/categories/default_category.png',
-      height: 150,
-      width: 150,
-      fit: BoxFit.fill,
+      height: 130,
+      width: 130,
+      fit: BoxFit.cover,
       errorBuilder: (context, error, stackTrace) {
-        // If the default image fails to load, show a fallback icon
         return Container(
           height: 130,
-          width: 110,
+          width: 130,
           color: Colors.grey[300],
           child: const Icon(
             Icons.category,
@@ -169,24 +207,4 @@ class CategoryTile extends StatelessWidget {
       },
     );
   }
-
-  // Returns the localized name of a category based on the given `categoryName`.
-  String getLocalizedCategoryName(BuildContext context, String categoryName) {
-    switch (categoryName) {
-      case 'Sports':
-        return AppLocalizations.of(context)!.sport;
-      case 'Science':
-        return AppLocalizations.of(context)!.science;
-      case 'History':
-        return AppLocalizations.of(context)!.history;
-      case 'Math':
-        return AppLocalizations.of(context)!.math;
-      case 'Geography':
-        return AppLocalizations.of(context)!.geography;
-      case 'English':
-        return AppLocalizations.of(context)!.english;
-      default:
-        return categoryName; // Fallback to the original name if no key exists
-    }
-}
 }

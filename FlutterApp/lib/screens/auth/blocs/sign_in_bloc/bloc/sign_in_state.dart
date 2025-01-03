@@ -12,13 +12,16 @@ sealed class SignInState extends Equatable {
 // SignInInitial state represents the initial state of the sign-in process.
 final class SignInInitial extends SignInState {}
 
-// SignInFailure state represents a failed sign-in attempt.
-final class SignInFailure extends SignInState {}
+final class SignInFailure extends SignInState {
+  final String error;
 
-// SignInProcess state represents the ongoing sign-in process.
+  const SignInFailure({this.error = ''});
+
+  @override
+  List<Object> get props => [error];
+}
+
 final class SignInProcess extends SignInState {}
 
 // SignInSuccess state represents a successful sign-in attempt.
 final class SignInSuccess extends SignInState {}
-
-

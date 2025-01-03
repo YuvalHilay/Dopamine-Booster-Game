@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:user_repository/user_repository.dart';
@@ -17,9 +18,8 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       try {
         // Attempt to sign in using the provided email and password.
         await _userRepository.signIn(event.email, event.password);
-      emit(SignInSuccess()); // Emit success state if login is successful
+        emit(SignInSuccess()); // Emit success state if login is successful
       }  catch (e) {
-        log('Error during sign-in: $e'); // Log the error
         // Catch any Exception thrown by UserRepository and pass it to the UI
         emit(SignInFailure(error: e.toString())); // Propagate the error message to the UI
       }
