@@ -17,8 +17,11 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       try {
         // Attempt to sign in using the provided email and password.
         await _userRepository.signIn(event.email, event.password);
-      } catch (e) {
-        emit(SignInFailure()); // Error occurs, failure statee.
+      emit(SignInSuccess()); // Emit success state if login is successful
+      }  catch (e) {
+        log('Error during sign-in: $e'); // Log the error
+        // Catch any Exception thrown by UserRepository and pass it to the UI
+        emit(SignInFailure(error: e.toString())); // Propagate the error message to the UI
       }
     });
     // Handles the SignOutRequired event to initiate the sign-out process.
