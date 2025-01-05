@@ -1,10 +1,8 @@
+import 'package:Dopamine_Booster/components/app_bar.dart';
 import 'package:Dopamine_Booster/components/my_drawer.dart';
-import 'package:Dopamine_Booster/screens/auth/blocs/sign_in_bloc/bloc/sign_in_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:user_repository/user_repository.dart';
-import 'package:Dopamine_Booster/components/logout_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
@@ -33,37 +31,14 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
       const Placeholder(child: Center(child: Text('Profile'))),
     ];
   }
-
+List<String> notifications = [
+    "🎉 New quiz added! hsh Test your skills now.",
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        title: Text(
-          'Welcome ${widget.user.userRole}, ${widget.user.firstName} ${widget.user.lastName}',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        elevation: 0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(CupertinoIcons.bars),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () async {
-              final shouldLogout = await showLogoutDialog(context);
-              if (shouldLogout) {
-                // Perform the sign-out logic
-                BlocProvider.of<SignInBloc>(context).add(SignOutRequired());
-              }
-            },
-            icon: const Icon(Icons.logout),
-          ),
-        ],
-      ),
+      appBar: MainAppBar(context: context, user: widget.user, notifications: notifications),
       drawer: const MyDrawer(),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),

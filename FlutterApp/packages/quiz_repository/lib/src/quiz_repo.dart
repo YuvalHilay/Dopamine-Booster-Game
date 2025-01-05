@@ -30,9 +30,11 @@ abstract class QuizRepository {
   /// [category] - The category object containing all required details to be added.
   Future<void> addCategory(Category category);
 
-  /// Updates the details of an existing category in the repository.
-  /// [category] - The category object containing updated details to be saved.
-  Future<void> updateCategory(Category category);
+  /// This method fetches the count of categories from the Firestore collection.
+  Future<String> getCategoryCount();
+
+  /// This method fetches the count of quizzes from the Firestore collection.
+  Future<String> getQuizCount();
 
   /// Deletes a category from the repository using its unique identifier.
   /// [categoryId] - The unique identifier of the category to be deleted.

@@ -64,6 +64,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       listener: (context, state) {
         if (state is SignUpSuccess) {
           setState(() {
+            displayMessageToUser('Sign in successful', context);
             signUpRequired = false;
           });
         } else if (state is SignUpProcess) {
@@ -71,6 +72,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             signUpRequired = true;
           });
         } else if (state is SignUpFailure) {
+          displayMessageToUser(AppLocalizations.of(context)!.invalidEmailOrPassword,context);
           return;
         }
       },

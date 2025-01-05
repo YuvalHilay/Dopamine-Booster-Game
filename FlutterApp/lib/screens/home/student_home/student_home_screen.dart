@@ -19,7 +19,11 @@ class StudentHomeScreen extends StatefulWidget {
 
 class _StudentHomeScreenState extends State<StudentHomeScreen> {
   int _currentPageIndex = 0;
-
+  List<String> studentNotifications = [
+    "🎉 New quiz added! Test your skills now.",
+    "⏰ Time to play the dopamine booster game.",
+    "📈 Your weekly progress is ready to view.",
+  ];
   late final List<Widget> _pages;
 
   @override
@@ -41,7 +45,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: MainAppBar(context: context, user: widget.user),
+      appBar: MainAppBar(context: context, user: widget.user, notifications: studentNotifications),
       drawer: const MyDrawer(),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),

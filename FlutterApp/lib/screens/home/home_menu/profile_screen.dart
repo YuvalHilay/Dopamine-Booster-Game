@@ -1,3 +1,4 @@
+import 'package:Dopamine_Booster/components/logout_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -128,7 +129,7 @@ class ProfileScreen extends StatelessWidget {
           icon: Icons.logout,
           title: 'Logout',
           onTap: () {
-            _showLogoutDialog(context);
+            showLogoutDialog(context);
           },
         ),
       ],
@@ -152,29 +153,5 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to log out?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              // TODO: Implement logout logic
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Logged out successfully.')),
-              );
-            },
-            child: const Text('Logout'),
-          ),
-        ],
-      ),
-    );
-  }
+ 
 }

@@ -17,6 +17,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     'History',
     'Math',
     'Geography',
+    'Physics',
     'English'
   ];
   String _searchQuery = '';
@@ -33,6 +34,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     switch (categoryName) {
       case 'Sports':
         return AppLocalizations.of(context)!.sport;
+      case 'Physics':
+        return AppLocalizations.of(context)!.physics;
       case 'Science':
         return AppLocalizations.of(context)!.science;
       case 'History':

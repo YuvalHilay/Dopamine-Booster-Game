@@ -1,44 +1,59 @@
 import 'package:flutter/material.dart';
 
 class NotificationIcon extends StatefulWidget {
-  const NotificationIcon({Key? key}) : super(key: key);
+  // Accepts a list of notifications as input
+  final List<String> notifications;
+
+  const NotificationIcon({
+    Key? key,
+    required this.notifications,
+  }) : super(key: key);
 
   @override
   _NotificationIconState createState() => _NotificationIconState();
 }
 
 class _NotificationIconState extends State<NotificationIcon> {
-  List<String> notifications = [
-    "🎉 New quiz added! Test your skills now.",
-    "⏰ Time to play the dopamine booster game.",
-    "📈 Your weekly progress is ready to view.",
-  ];
-
-  bool _isDropdownOpen = false;
-
-  // Toggles the dropdown menu.
-  void _toggleDropdown() {
-    setState(() {
-      _isDropdownOpen = !_isDropdownOpen;
-    });
-  }
-
-  // Removes a notification.
-  void _removeNotification(int index) {
-    setState(() {
-      notifications.removeAt(index);
-    });
-  }
+  late List<String> notifications; // Local copy of notifications for state management
+  bool _isDropdownOpen = false; // Tracks whether the dropdown is open
 
   @override
+  void initState() {
+    super.initState();
+    // Initialize the local notifications list with the provided notifications
+    notifications = List<String>.from(widget.notifications);
+  }
+
+  // Toggles the dropdown menu's visibility
+  void _toggleDropdown() {
+    setState(() {
+      _isDropdownOpen = !_isDropdownOpen; // Flip the dropdown state
+    });
+  }
+
+  // Removes a notification by index and updates the UI
+  void _removeNotification(int index) { 
+    if (index >= 0 && index < notifications.length) {
+      setState(() {
+        notifications.removeAt(index); // Remove the selected notification
+        // Close the dropdown if no notifications remain
+        if (notifications.isEmpty) {
+          _isDropdownOpen = false;
+        }
+      });
+    }
+  }
+  
+  @override
   Widget build(BuildContext context) {
+    final isRtl = Directionality.of(context) == TextDirection.rtl; // Check text direction
+    final screenWidth = MediaQuery.of(context).size.width; // Get the screen width
+
     return Stack(
-      
       clipBehavior: Clip.none,
       children: [
         GestureDetector(
-          
-          onTap: _toggleDropdown,
+          onTap: _toggleDropdown, // Toggle the dropdown when tapped
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -54,27 +69,34 @@ class _NotificationIconState extends State<NotificationIcon> {
         ),
         if (_isDropdownOpen)
           Positioned(
+            // The dropdown menu, positioned dynamically based on locale
             top: 40,
-            right: 0,
+            left: isRtl ? 0 : null,
+            right: isRtl ? null : 0,
             child: Material(
               elevation: 12,
               borderRadius: BorderRadius.circular(16),
               color: Colors.white,
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 350),
+                constraints: BoxConstraints(
+                  maxWidth: screenWidth * 0.7, // Dynamically adjust to 70% of screen width
+                  maxHeight: notifications.length > 4 ? 300 : double.infinity,
+                ),
                 child: ListView.separated(
                   shrinkWrap: true,
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   itemCount: notifications.length,
-                  separatorBuilder: (context, index) => const Divider(height: 2.5),
+                  separatorBuilder: (context, index) =>
+                      const Divider(height: 2.5),
                   itemBuilder: (context, index) {
                     return ListTile(
-                      leading: const CircleAvatar(
+                      leading: CircleAvatar(
                         backgroundColor: Colors.blueAccent,
                         radius: 18,
                         child: Icon(
                           Icons.notifications_active,
                           color: Colors.white,
+                          textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
                         ),
                       ),
                       title: Text(
@@ -83,6 +105,7 @@ class _NotificationIconState extends State<NotificationIcon> {
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
+                        textAlign: isRtl ? TextAlign.right : TextAlign.left,
                       ),
                       trailing: IconButton(
                         icon: const Icon(

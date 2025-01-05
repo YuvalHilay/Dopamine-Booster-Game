@@ -11,8 +11,9 @@ import 'notificationMenu.dart';
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
   final MyUser user;
   final BuildContext context;
+  final List<String> notifications;
 
-  MainAppBar({required this.context, required this.user});
+  MainAppBar({required this.context, required this.user, required this.notifications});
 
   @override
   Size get preferredSize => Size.fromHeight(85);
@@ -54,7 +55,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                     children: [
                       Text(
                         AppLocalizations.of(context)!
-                            .welcomeUser(user.userRole),
+                            .welcomeUser(_getRoleLocalizedString(context, user.userRole)),
                         style: GoogleFonts.openSans(
                           textStyle: const TextStyle(
                             fontSize: 18,
@@ -76,7 +77,8 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ],
                   ),
                 ),
-                NotificationIcon(),
+                // Notification menu button and window
+                NotificationIcon(notifications: notifications),
                 const SizedBox(width: 12),
                 // Logout Button
                 _buildLogoutButton(),
@@ -134,4 +136,17 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
+
+  String _getRoleLocalizedString(BuildContext context, String userRole) {
+    switch (userRole) {
+      case 'Student':
+        return AppLocalizations.of(context)!.student;
+      case 'Teacher':
+        return AppLocalizations.of(context)!.teacher;
+      case 'Parent':
+        return AppLocalizations.of(context)!.parent;
+      default:
+        return AppLocalizations.of(context)!.student;
+    }
+  }
 }

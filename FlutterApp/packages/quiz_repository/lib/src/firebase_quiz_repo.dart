@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:quiz_repository/quiz.repository.dart';
 
 class FirebaseQuizRepo implements QuizRepository {
@@ -9,7 +8,6 @@ class FirebaseQuizRepo implements QuizRepository {
   // Collections references
   late final CollectionReference _quizzesCollection;
   late final CollectionReference _categoriesCollection;
-  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
   FirebaseQuizRepo({FirebaseFirestore? firestore}) 
       : _firestore = firestore ?? FirebaseFirestore.instance {
@@ -225,18 +223,27 @@ class FirebaseQuizRepo implements QuizRepository {
 }
 
   @override
-  // Updates an existing category's information (future use)
-  Future<void> updateCategory(Category category) async {
-    try {
-      await _categoriesCollection.doc(category.categoryId).update({
-        'categoryName': category.categoryName,
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-    } catch (e) {
-      log('Error updating category: ${e.toString()}');
-      rethrow;
-    }
+  // This method fetches the count of categories from the Firestore collection.
+  Future<String> getCategoryCount() async {
+  try {
+    final snapshot = await _categoriesCollection.get(); // Retrieve data from categories collection
+    return snapshot.size.toString(); // This gives the number of documents in the collection
+  } catch (e) {
+    return '0'; // Return 0 if there's an error
   }
+}
+
+  @override
+  // This method fetches the count of quizzes from the Firestore collection.
+  Future<String> getQuizCount() async {
+  try {
+    final snapshot = await _quizzesCollection.get(); // Retrieve data from quizzes collection
+    return snapshot.size.toString(); // This gives the number of documents in the collection
+  } catch (e) {
+    return '0'; // Return 0 if there's an error
+  }
+}
+
 
   @override
   // Deletes a category and all associated quizzes

@@ -211,6 +211,22 @@
     "@helpTitle": {
         "description": "Help & Information"
     },
+    "helpSection1" : "What is ADHD?", 
+    "@helpSection1": {
+        "description": "What is ADHD?"
+    },
+    "helpSection2" : "How Dopamine Booster Game Helps", 
+    "@helpSection2": {
+        "description": "How Dopamine Booster Game Helps"
+    },
+    "helpSection3" : "Features", 
+    "@helpSection3": {
+        "description": "Features"
+    },
+    "helpSection4" : "Tips for Success", 
+    "@helpSection4": {
+        "description": "Tips for Success"
+    },
     "cancel" : "Cancel", 
     "@cancel": {
         "description": "Cancel"
@@ -279,6 +295,22 @@
     "@history": {
         "description": "History"
     },
+    "physics" : "Physics", 
+    "@physics": {
+        "description": "Physics"
+    },
+    "statistics" : "Statistics", 
+    "@statistics": {
+        "description": "Statistics"
+    },
+    "activeStudents" : "Active Students", 
+    "@activeStudents": {
+        "description": "Active Students"
+    },
+    "viewStats" : "View Stats", 
+    "@viewStats": {
+        "description": "View Stats"
+    },
     "searchCategories" : "Search Categories", 
     "@searchCategories": {
         "description": "Search Categories"
@@ -286,6 +318,10 @@
     "geography" : "Geography", 
     "@geography": {
         "description": "Geography"
+    },
+    "recentActivities" : "Recent Activities", 
+    "@recentActivities": {
+        "description": "Recent Activities"
     },
     "female" : "Female", 
     "@female": {
@@ -318,6 +354,10 @@
     "sendFeedback" : "Send Feedback", 
     "@sendFeedback": {
         "description": "Send Feedback"
+    },
+    "quickActions" : "Quick Actions", 
+    "@quickActions": {
+        "description": "Quick Actions"
     },
     "game" : "Game", 
     "@game": {
