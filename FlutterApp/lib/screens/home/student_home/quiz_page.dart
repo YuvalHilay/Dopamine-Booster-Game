@@ -6,8 +6,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class QuizScreen extends StatefulWidget {
   final Category category;
+  final String userId;
+  final String userName;
 
-  const QuizScreen({Key? key, required this.category}) : super(key: key);
+  const QuizScreen({Key? key, required this.category, required this.userId, required this.userName}) : super(key: key);
 
   @override
   _QuizScreenState createState() => _QuizScreenState();
@@ -15,6 +17,7 @@ class QuizScreen extends StatefulWidget {
 
 class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
   final QuizRepository quizRepository = FirebaseQuizRepo(); // Initialize the quiz repository
+  final QuizRepository gradeRepository = FirebaseQuizRepo(); // Initialize the quiz repository
   late PageController _pageController;
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -86,52 +89,69 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
           _selectedAnswer = null;
         });
       } else {
-        _showResults();
+        _showResults(widget.category.categoryId, widget.category.categoryName, widget.userId);
       }
       _animationController.reset();
     });
   }
 
-  void _showResults() {
+  bool isQuizComplete(int score, int totalQuizzes) {
+    return score == totalQuizzes;
+  }
+
+  void _showResults(String categoryId, String categoryName, String userId) {
+    final bool isComplete = isQuizComplete(_score, _quizzes.length);
+
     showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(AppLocalizations.of(context)!.quizComplete),
-        content: Text('Your score: $_score / ${_quizzes.length}'),
-        actions: <Widget>[
-          TextButton(
-            child: Text(AppLocalizations.of(context)!.tryAgain),
-            onPressed: () {
-              Navigator.of(context).pop();
-              setState(() {
-                _currentQuizIndex = 0;
-                _score = 0;
-                _answered = false;
-                _selectedAnswer = null;
-              });
-              _pageController.jumpToPage(0);
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.blue, // Set the desired color for the Try Again button
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.quizComplete),
+          content: Text('Your score: $_score / ${_quizzes.length}'),
+          actions: <Widget>[
+            TextButton(
+              child: Text(AppLocalizations.of(context)!.tryAgain),
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  _currentQuizIndex = 0;
+                  _score = 0;
+                  _answered = false;
+                  _selectedAnswer = null;
+                });
+                _pageController.jumpToPage(0);
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue, // Set the desired color for the Try Again button
+              ),
             ),
-          ),
-          TextButton(
-            child: Text(AppLocalizations.of(context)!.backCat),
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.green, // Set the desired color for the Back to Categories button
+            TextButton(
+              child: Text(AppLocalizations.of(context)!.backCat),
+              onPressed: () async {
+                // Save the grade before navigating back
+                await gradeRepository.saveGrade(
+                  categoryId,
+                  categoryName,
+                  widget.userName,
+                  isComplete,
+                  userId,
+                  '$_score/${_quizzes.length}', // Save as percentage or normalized score 
+                );
+
+                Navigator.of(context).pop();
+                 Navigator.pop(context, true); // Pass a flag to indicate data has changed
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.green, // Set the desired color for the Back to Categories button
+              ),
             ),
-          ),
-        ],
-      );
-    } ,
+          ],
+        );
+      },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

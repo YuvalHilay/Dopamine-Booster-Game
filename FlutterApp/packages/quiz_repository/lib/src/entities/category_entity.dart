@@ -4,6 +4,7 @@ class CategoryEntity {
   String categoryId;
   String categoryName;
   int quizCount;
+  final double averageScore; // Average score for the category
   List<Quiz> quizzes;
 
   // Constructor to initialize the quiz object with required fields.
@@ -11,6 +12,7 @@ class CategoryEntity {
     required this.categoryId,
     required this.categoryName,
     required this.quizCount,
+    required this.averageScore,
     List<Quiz>? quizzes, // Allow nullable list and default to empty
   }) : quizzes = quizzes ?? []; // If no quizzes are provided, initialize with an empty list
 
@@ -18,6 +20,8 @@ class CategoryEntity {
   void updateQuizCount() {
     quizCount = quizzes.length;
   }
+
+  
 
 
 }

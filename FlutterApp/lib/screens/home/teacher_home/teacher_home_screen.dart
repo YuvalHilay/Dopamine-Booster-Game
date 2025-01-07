@@ -31,10 +31,13 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
     super.initState();
     _pages = [
       HomeScreen(
-        onNavigateToAddQuiz: () => _setPageIndex(1), // Pass callback to navigate to AddQuizScreen
-        onNavigateToAddCategory: () => _setPageIndex(2), // Pass callback to navigate to AddCategoryScreen
+        onNavigateToAddQuiz: () =>
+            _setPageIndex(1), // Pass callback to navigate to AddQuizScreen
+        onNavigateToAddCategory: () =>
+            _setPageIndex(2), // Pass callback to navigate to AddCategoryScreen
       ),
-      AddQuizScreen(authorName: '${widget.user.firstName} ${widget.user.lastName}'),
+      AddQuizScreen(
+          authorName: '${widget.user.firstName} ${widget.user.lastName}'),
       const AddCategoriesScreen(),
       const ProfileScreen(),
     ];
@@ -46,13 +49,16 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
       _currentPageIndex = index; // Update the current page index
     });
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: MainAppBar(context: context, user: widget.user, notifications: teacherNotifications),
-      drawer: const MyDrawer(),
+      appBar: MainAppBar(
+          context: context,
+          user: widget.user,
+          notifications: teacherNotifications),
+      drawer: MyDrawer(),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         child: _pages[_currentPageIndex], // Display current page
@@ -65,15 +71,24 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentPageIndex,
-        onTap: (index) => _setPageIndex(index), // Use the same method for navigation
+        onTap: (index) =>
+            _setPageIndex(index), // Use the same method for navigation
         selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
         items: [
-          BottomNavigationBarItem(icon: const Icon(CupertinoIcons.home), label: AppLocalizations.of(context)!.home),
-          BottomNavigationBarItem(icon: const Icon(CupertinoIcons.book), label: AppLocalizations.of(context)!.addQuizBtn),
-          BottomNavigationBarItem(icon: const Icon(CupertinoIcons.gamecontroller), label: AppLocalizations.of(context)!.addCatergory),
-          BottomNavigationBarItem(icon: const Icon(CupertinoIcons.profile_circled), label: AppLocalizations.of(context)!.profile),
+          BottomNavigationBarItem(
+              icon: const Icon(CupertinoIcons.home),
+              label: AppLocalizations.of(context)!.home),
+          BottomNavigationBarItem(
+              icon: const Icon(CupertinoIcons.book),
+              label: AppLocalizations.of(context)!.addQuizBtn),
+          BottomNavigationBarItem(
+              icon: const Icon(CupertinoIcons.gamecontroller),
+              label: AppLocalizations.of(context)!.addCatergory),
+          BottomNavigationBarItem(
+              icon: const Icon(CupertinoIcons.profile_circled),
+              label: AppLocalizations.of(context)!.profile),
         ],
       ),
     );

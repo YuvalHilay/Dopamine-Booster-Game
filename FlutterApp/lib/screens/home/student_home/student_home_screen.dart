@@ -31,7 +31,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     super.initState();
     _pages = [
       HomeScreen(gender: widget.user.gender),
-      const CategoriesScreen(),
+      CategoriesScreen(userId: widget.user.userId, userName: '${widget.user.firstName} ${widget.user.lastName}'),
       Placeholder(
         child: Center(
             child: Image.asset('assets/images/boostergameimg.png',
@@ -46,7 +46,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: MainAppBar(context: context, user: widget.user, notifications: studentNotifications),
-      drawer: const MyDrawer(),
+      drawer: MyDrawer(),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         child: _pages[_currentPageIndex],

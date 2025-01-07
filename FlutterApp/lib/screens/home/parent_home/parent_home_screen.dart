@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 class ParentHomeScreen extends StatefulWidget {
   final MyUser user;
 
@@ -31,15 +30,17 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
       const Placeholder(child: Center(child: Text('Profile'))),
     ];
   }
-List<String> notifications = [
+
+  List<String> notifications = [
     "🎉 New quiz added! hsh Test your skills now.",
   ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: MainAppBar(context: context, user: widget.user, notifications: notifications),
-      drawer: const MyDrawer(),
+      appBar: MainAppBar(
+          context: context, user: widget.user, notifications: notifications),
+      drawer: MyDrawer(),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
         child: _pages[_currentPageIndex], // Display current page
@@ -61,10 +62,17 @@ List<String> notifications = [
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
         items: [
-          BottomNavigationBarItem(icon: const Icon(CupertinoIcons.home), label: AppLocalizations.of(context)!.home),
-          const BottomNavigationBarItem(icon: Icon(CupertinoIcons.book), label: 'View Stats'),
-          const BottomNavigationBarItem(icon: Icon(CupertinoIcons.gamecontroller), label: 'Contact Teacher'),
-          BottomNavigationBarItem(icon: Icon(CupertinoIcons.profile_circled), label: AppLocalizations.of(context)!.profile),
+          BottomNavigationBarItem(
+              icon: const Icon(CupertinoIcons.home),
+              label: AppLocalizations.of(context)!.home),
+          const BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.book), label: 'View Stats'),
+          const BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.gamecontroller),
+              label: 'Contact Teacher'),
+          BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.profile_circled),
+              label: AppLocalizations.of(context)!.profile),
         ],
       ),
     );

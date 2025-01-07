@@ -36,6 +36,12 @@ abstract class QuizRepository {
   /// This method fetches the count of quizzes from the Firestore collection.
   Future<String> getQuizCount();
 
+  Future<void> saveGrade(String categoryId, String categoryName, String userName, bool isComplete, String userId, String normalizedScore);
+  
+  Future<List<Map<String, dynamic>>> getLeaderboard();
+   
+  Future<List<Grade>> fetchUserGrades(String userId);
+
   /// Deletes a category from the repository using its unique identifier.
   /// [categoryId] - The unique identifier of the category to be deleted.
   Future<void> deleteCategory(String categoryId);
