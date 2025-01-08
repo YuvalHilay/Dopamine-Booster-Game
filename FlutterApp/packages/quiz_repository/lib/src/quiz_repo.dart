@@ -36,10 +36,17 @@ abstract class QuizRepository {
   /// This method fetches the count of quizzes from the Firestore collection.
   Future<String> getQuizCount();
 
+  /// Saves or updates a user's grade for a specific category in the database.
+  /// @return A Future that completes when the grade is successfully saved or updated.
   Future<void> saveGrade(String categoryId, String categoryName, String userName, bool isComplete, String userId, String normalizedScore);
   
+  /// Retrieves a leaderboard containing the top users based on their performance.
+  /// @return A Future that resolves to a list of maps, each containing user-related details such as name and total score.
   Future<List<Map<String, dynamic>>> getLeaderboard();
-   
+  
+  /// Fetches the grades of a specific user from the database.
+  /// @param userId The unique identifier of the user whose grades are to be fetched.
+  /// @return A Future that resolves to a list of Grade objects containing details such as category, score, and completion status.
   Future<List<Grade>> fetchUserGrades(String userId);
 
   /// Deletes a category from the repository using its unique identifier.

@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!162 &1
+EditorUserSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 4
+  m_ConfigSettings:
+    RecentlyUsedSceneGuid-0:
+      value: 510104005653080d5c0d0a23167b5e4442161a2c747127342f2c1f36e1b03660
+      flags: 0
+    RecentlyUsedSceneGuid-1:
+      value: 5053565354025d09545c5a7015750d4447154d792e7f71602c794862e7b86c61
+      flags: 0
+    RecentlyUsedSceneGuid-2:
+      value: 5a04005f520c085e590f5a2111735e444f4e4c737c7f71617f7f4c32e7e3313c
+      flags: 0
+    RecentlyUsedSceneGuid-3:
+      value: 025400565c505f5e0c0d5a7440760c4442164f7a2e7c7434787b4e35bab0666f
+      flags: 0
+    RecentlyUsedSceneGuid-4:
+      value: 01030054530351035b585f7a15255e44104f1b7d7c78766528714b35bbb5303c
+      flags: 0
+    RecentlyUsedSceneGuid-5:
+      value: 00030303070c51095b0d5a7b4425074444161c2b282c25687d2a4860e0e3606b
+      flags: 0
+    RecentlyUsedSceneGuid-6:
+      value: 505705555d5051020b0c097644275d4442161929297177697d7d4b6bb1e3613a
+      flags: 0
+    RecentlyUsedSceneGuid-7:
+      value: 5b5050555c045b5a5957582149255b44414e1d7e7e2c74607c7a1e65e6b4633e
+      flags: 0
+    RecentlyUsedSceneGuid-8:
+      value: 5a5757560101590a5d0c0e24427b5d44434e4c7a7b7a23677f2b4565b7b5353a
+      flags: 0
+    RecentlyUsedSceneGuid-9:
+      value: 5550520307505b0e555c5d7714700644454f1e7a797d713478714866e0b4313b
+      flags: 0
+    UnityRemoteDevice:
+      value: 0a7e6748245b10
+      flags: 0
+    UnityRemoteResolution:
+      value: 2d5e460b0459
+      flags: 0
+    vcSharedLogLevel:
+      value: 0d5e400f0650
+      flags: 0
+  m_VCAutomaticAdd: 1
+  m_VCDebugCom: 0
+  m_VCDebugCmd: 0
+  m_VCDebugOut: 0
+  m_SemanticMergeMode: 2
+  m_DesiredImportWorkerCount: 4
+  m_StandbyImportWorkerCount: 2
+  m_IdleImportWorkerShutdownDelay: 60000
+  m_VCShowFailedCheckout: 1
+  m_VCOverwriteFailedCheckoutAssets: 1
+  m_VCProjectOverlayIcons: 1
+  m_VCHierarchyOverlayIcons: 1
+  m_VCOtherOverlayIcons: 1
+  m_VCAllowAsyncUpdate: 0
+  m_VCScanLocalPackagesOnConnect: 1
+  m_ArtifactGarbageCollection: 1

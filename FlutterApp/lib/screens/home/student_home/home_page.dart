@@ -126,12 +126,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Row(
       children: [
-        CircleAvatar(
-          radius: 18,
-          backgroundColor: position <= 3 ? colors[position - 1] : Colors.grey[400],
-          child: Text(
-            position.toString(),
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        Padding(
+          padding: const EdgeInsets.all(3),
+          child: CircleAvatar(
+            radius: 18,
+            backgroundColor: position <= 3 ? colors[position - 1] : Colors.grey[400],
+            child: Text(
+              position.toString(),
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
           ),
         ),
         const SizedBox(width: 12),
@@ -143,9 +146,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         //top 3 users' points 
-        Text(
-          score > 0 ? '${score.toStringAsFixed(1)} pts' : '-',
-          style: const TextStyle(fontSize: 16, color: Colors.black54),
+        Text(   
+          score > 0 ? AppLocalizations.of(context)!.points(score.toStringAsFixed(0)) : '-',
+          style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.inversePrimary),
         ),
       ],
     );

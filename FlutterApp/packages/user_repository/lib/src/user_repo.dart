@@ -20,8 +20,6 @@ abstract class UserRepository {
   // Signs in the user using Google authentication.
   Future<void> signInWithGoogle();
 
-  Future<List<Map<String, String>>> fetchUserNames();
-
   // Sends a password reset email to the user with the provided [email].
   Future<void> sendPasswordResetEmail(String email);
 }

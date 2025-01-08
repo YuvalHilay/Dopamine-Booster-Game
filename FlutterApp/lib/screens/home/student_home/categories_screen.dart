@@ -4,18 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:quiz_repository/quiz.repository.dart';
 
+// Categories screen displaying a list of quiz categories for the user.
 class CategoriesScreen extends StatefulWidget {
-  final String userId;
-  final String userName;
-  CategoriesScreen({Key? key, required this.userId, required this.userName}) : super(key: key);
+  final String userId; // User's unique identifier.
+  final String userName; // User's name.
+
+  CategoriesScreen({Key? key, required this.userId, required this.userName})
+      : super(key: key);
 
   @override
   State<CategoriesScreen> createState() => _CategoriesScreenState();
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  final QuizRepository _quizRepository = FirebaseQuizRepo();
-  late Future<List<Grade>> _gradesList;
+  final QuizRepository _quizRepository = FirebaseQuizRepo(); // Repository for quiz-related operations.
+  late Future<List<Grade>> _gradesList; // Future to store grades fetched from the repository.
+
+  // Default list of category names for localization and fallback purposes.
   List<String> defCategoryNames = [
     'Sports',
     'Science',
@@ -25,40 +30,21 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     'Physics',
     'English'
   ];
-  String _searchQuery = '';
+  String _searchQuery = ''; // Holds the user's search query.
 
   @override
   void initState() {
     super.initState();
+    // Fetch the grades for the user when the screen initializes.
     _gradesList = _quizRepository.fetchUserGrades(widget.userId);
   }
 
+  // Fetch all quiz categories from the repository.
   Future<List<Category>> fetchCategories() async {
     try {
       return await _quizRepository.getAllCategories();
     } catch (e) {
-      return [];
-    }
-  }
-
-  String getLocalizedCategoryName(BuildContext context, String categoryName) {
-    switch (categoryName) {
-      case 'Sports':
-        return AppLocalizations.of(context)!.sport;
-      case 'Physics':
-        return AppLocalizations.of(context)!.physics;
-      case 'Science':
-        return AppLocalizations.of(context)!.science;
-      case 'History':
-        return AppLocalizations.of(context)!.history;
-      case 'Math':
-        return AppLocalizations.of(context)!.math;
-      case 'Geography':
-        return AppLocalizations.of(context)!.geography;
-      case 'English':
-        return AppLocalizations.of(context)!.english;
-      default:
-        return categoryName;
+      return []; // Return an empty list if there's an error.
     }
   }
 
@@ -68,31 +54,32 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       appBar: CategoriesBar(
         onSearchChanged: (newQuery) {
           setState(() {
-            _searchQuery = newQuery;
+            _searchQuery = newQuery; // Update the search query dynamically.
           });
         },
       ),
       body: SafeArea(
         child: FutureBuilder<List<dynamic>>(
+          // Combine fetching categories and grades in one Future.
           future: Future.wait([
-            fetchCategories(), // Fetch categories
-            _quizRepository.fetchUserGrades(widget.userId), // Fetch grades
+            fetchCategories(),
+            _quizRepository.fetchUserGrades(widget.userId),
           ]),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator()); // Show loading indicator.
             }
             if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return Center(child: Text('Error: ${snapshot.error}')); // Display errors if any.
             }
 
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No data available.'));
+              return const Center(child: Text('No data available.')); // Handle no data scenario.
             }
 
-            // Extract categories and grades from the snapshot
+            // Extract categories from snapshot data.
             final categories = snapshot.data![0] as List<Category>;
-            final grades = snapshot.data![1] as List<Grade>;
+            // Filter categories based on the user's search query.
             final filteredCategories = categories
                 .where((category) =>
                     category.categoryName.toLowerCase().contains(_searchQuery))
@@ -107,10 +94,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
                 final grades = gradesSnapshot.data ?? [];
 
+                // Build a grid view to display categories.
                 return GridView.builder(
                   padding: const EdgeInsets.all(16),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
+                    crossAxisCount: 2, // Two items per row.
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
                     childAspectRatio: 0.7,
@@ -119,7 +107,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   itemBuilder: (context, index) {
                     final category = filteredCategories[index];
 
-                    // Find the grade for the category
+                    // Find grade associated with the current category.
                     final grade = grades.firstWhere(
                       (grade) => grade.categoryId == category.categoryId,
                       orElse: () => Grade(
@@ -131,15 +119,14 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                           userName: widget.userName),
                     );
 
+                    // Render individual category tiles.
                     return CategoryTile(
                       userId: widget.userId,
                       category: category,
                       defCategoryNames: defCategoryNames,
                       searchQuery: _searchQuery,
                       userName: widget.userName,
-                      grade: grade, // Pass the grade to the CategoryTile
-                      getLocalizedCategoryName: (context, categoryName) =>
-                          categoryName,
+                      grade: grade, // Pass grade to the tile.
                       onTileTapped: () {
                         setState(() {
                           _gradesList =
@@ -158,44 +145,62 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 }
 
+// Widget for rendering individual category tiles.
 class CategoryTile extends StatelessWidget {
   final Category category;
   final List<String> defCategoryNames;
   final String searchQuery;
   final String userId;
   final String userName;
-  final Grade grade; // Add the grade parameter
-  final VoidCallback onTileTapped; // New callback for reloading
-  final String Function(BuildContext, String) getLocalizedCategoryName;
+  final Grade grade; // Represents the grade for the category.
+  final VoidCallback onTileTapped; // Callback for reloading data on changes.
 
   const CategoryTile({
     Key? key,
     required this.category,
     required this.defCategoryNames,
     required this.userId,
-    required this.grade, // Accept grade
+    required this.grade,
     required this.searchQuery,
     required this.userName,
-    required this.getLocalizedCategoryName,
-    required this.onTileTapped, // Required parameter
+    required this.onTileTapped,
   }) : super(key: key);
+
+  // Localize category names based on the app's language settings.
+  String getLocalizedCategoryName(BuildContext context, String categoryName) {
+    switch (categoryName) {
+      case 'Sports':
+        return AppLocalizations.of(context)!.sport;
+      case 'Physics':
+        return AppLocalizations.of(context)!.physics;
+      case 'Science':
+        return AppLocalizations.of(context)!.science;
+      case 'History':
+        return AppLocalizations.of(context)!.history;
+      case 'Math':
+        return AppLocalizations.of(context)!.math;
+      case 'Geography':
+        return AppLocalizations.of(context)!.geography;
+      case 'English':
+        return AppLocalizations.of(context)!.english;
+      default:
+        return categoryName; // Default to the original name if no localization is found.
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final localizedCategoryName =
-        getLocalizedCategoryName(context, category.categoryName);
-
     return GestureDetector(
       onTap: () async {
         final result = await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                QuizScreen(category: category, userId: userId, userName: userName),
+            builder: (context) => QuizScreen(
+                category: category, userId: userId, userName: userName),
           ),
         );
 
-        // Trigger callback if data changes
+        // Reload data if the user completes a quiz or data changes.
         if (result == true) {
           onTileTapped();
         }
@@ -203,7 +208,7 @@ class CategoryTile extends StatelessWidget {
       child: Card(
         elevation: 4,
         color: grade.isComplete
-            ? const Color.fromARGB(255, 153, 238, 156)
+            ? const Color.fromARGB(255, 153, 238, 156) // Completed category color.
             : Theme.of(context).colorScheme.primary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -212,14 +217,17 @@ class CategoryTile extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: _buildCategoryImage(),
+              child: _buildCategoryImage(), // Category image widget.
             ),
             const SizedBox(height: 10),
             Text(
-              localizedCategoryName,
-              style: const TextStyle(
+              getLocalizedCategoryName(context, category.categoryName),
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
+                color: grade.isComplete
+                    ? Colors.black
+                    : Theme.of(context).colorScheme.inversePrimary,
               ),
             ),
             const SizedBox(height: 5),
@@ -227,34 +235,39 @@ class CategoryTile extends StatelessWidget {
               AppLocalizations.of(context)!.quizCount(category.quizCount),
               style: TextStyle(
                   fontSize: 14,
-                  color: Theme.of(context).colorScheme.inversePrimary),
+                  color: grade.isComplete
+                      ? Colors.black
+                      : Theme.of(context).colorScheme.inversePrimary),
             ),
             const SizedBox(height: 5),
-            // Display the grade below the quiz count
             Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.center, // Center the row content
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (grade.isComplete)
-                  Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.check, // Icon for completion
-                      color: Colors.white,
-                      size: 16,
-                    ),
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: grade.isComplete
+                        ? Colors.green
+                        : Theme.of(context).colorScheme.primary,
+                    shape: BoxShape.circle,
                   ),
-                const SizedBox(width: 8), // Small space between icon and text
+                  child: Icon(
+                    grade.isComplete ? Icons.check : Icons.info_outline,
+                    color: grade.isComplete
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.inversePrimary,
+                    size: 16,
+                  ),
+                ),
+                const SizedBox(width: 8),
                 Text(
-                  'Grade: ${grade.score}', // Updated text
+                  AppLocalizations.of(context)!.grade(grade.score),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.inversePrimary,
+                    color: grade.isComplete
+                        ? Colors.black
+                        : Theme.of(context).colorScheme.inversePrimary,
                   ),
                 ),
               ],
@@ -265,6 +278,7 @@ class CategoryTile extends StatelessWidget {
     );
   }
 
+  // Build category-specific image or fallback to a default image.
   Widget _buildCategoryImage() {
     String? matchingName;
     for (String defName in defCategoryNames) {
@@ -288,6 +302,7 @@ class CategoryTile extends StatelessWidget {
     }
   }
 
+  // Default image for categories with no specific image.
   Widget _buildDefaultImage() {
     return Image.asset(
       'assets/categories/default_category.png',

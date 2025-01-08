@@ -248,6 +248,7 @@ class FirebaseQuizRepo implements QuizRepository {
 }
 
   @override
+  // Retrieves a leaderboard of top users based on their total scores.
   Future<List<Map<String, dynamic>>> getLeaderboard() async {
   try {
     // Fetch all grades
@@ -296,9 +297,8 @@ class FirebaseQuizRepo implements QuizRepository {
   }
 }
 
-
-  
   @override
+  // Saves or updates a user's grade for a specific category in the database.
   Future<void> saveGrade(String categoryId, String categoryName, String userName, bool isComplete, String userId, String normalizedScore) async {
   try {
     // Query to check if a grade already exists for the user in the same category
@@ -334,6 +334,7 @@ class FirebaseQuizRepo implements QuizRepository {
 }
   
   @override
+  // Fetches a list of grades for a specific user based on their user ID.
   Future<List<Grade>> fetchUserGrades(String userId) async {
     try {
       final querySnapshot = await _gradesCollection.where('userId', isEqualTo: userId).get();

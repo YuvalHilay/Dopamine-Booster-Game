@@ -363,6 +363,14 @@
     "@game": {
         "description": "Game"
     },
+    "grade" : "Grade: {score}", 
+    "@grade": {
+        "description": "Grade: {score}"
+    },
+    "points" : "{score} Points", 
+    "@points": {
+        "description": "{score} Points"
+    },
     "oneNum" : "1 Number", 
     "@oneNum": {
         "description": "1 Number"

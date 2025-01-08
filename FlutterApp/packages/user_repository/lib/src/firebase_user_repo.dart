@@ -34,7 +34,7 @@ class FirebaseUserRepo implements UserRepository {
 
   @override
   // Signs in the user with the provided [email] and [password].
-Future<void> signIn(String email, String password) async {
+  Future<void> signIn(String email, String password) async {
   try {
     // Attempt to sign in using Firebase Auth
     await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
@@ -137,33 +137,6 @@ Future<void> signIn(String email, String password) async {
       //displayMessageToUser("google sign-in failed");
     }
   }
-
-
-  Future<List<Map<String, String>>> fetchUserNames() async {
-
-  // Fetch all unique userIds from the grades collection
-  final usersSnapshot = await usersCollection.get();
-  final userIds = usersSnapshot.docs.map((doc) => doc['userId']).toSet().toList();
-
-  final userNames = <Map<String, String>>[];
-
-  // Loop through the userIds and fetch their first and last names
-  for (final userId in userIds) {
-    final userDoc = await usersCollection.doc(userId).get();
-    if (userDoc.exists) {
-      final firstName = userDoc['firstName'] ?? 'Unknown';
-      final lastName = userDoc['lastName'] ?? 'Unknown';
-      final userName = '$firstName $lastName'; // Combine firstName and lastName
-      userNames.add({'userId': userId, 'userName': userName});
-    } else {
-      // If user document doesn't exist, assign 'Unknown' to userName
-      userNames.add({'userId': userId, 'userName': 'Unknown'});
-    }
-  }
-
-  return userNames;
-}
-
 
   @override
   // Sends a password reset email to the user with the provided [email].

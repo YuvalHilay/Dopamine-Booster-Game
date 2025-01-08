@@ -42,12 +42,13 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
     _loadQuizzes(); // Load quizzes for the selected category
   }
 
+  // Fetches quizzes for the selected category
   Future<void> _loadQuizzes() async {
     try {
       List<Quiz> quizzes = await quizRepository.getQuizzesByCategory(widget.category.categoryId);
       setState(() {
         _quizzes = quizzes;
-        _isLoading = false;
+        _isLoading = false;  // Set loading to false once quizzes are loaded
       });
     } catch (e) {
       displayMessageToUser('Failed to load quizzes!', context);
@@ -64,18 +65,19 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
+   // Handles the user's answer selection
   void _handleAnswer(String answer) {
     if (_answered) return;
 
     setState(() {
-      _answered = true;
-      _selectedAnswer = answer;
+      _answered = true; // Mark question as answered
+      _selectedAnswer = answer; // Save selected answer
       if (answer == _quizzes[_currentQuizIndex].correctAnswer) {
         _score++;
       }
     });
 
-    _animationController.forward();
+    _animationController.forward(); // Trigger animation
 
     Timer(const Duration(seconds: 2), () {
       if (_currentQuizIndex < _quizzes.length - 1) {
@@ -86,25 +88,26 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
         setState(() {
           _currentQuizIndex++;
           _answered = false;
-          _selectedAnswer = null;
+          _selectedAnswer = null; // Reset selected answer
         });
       } else {
         _showResults(widget.category.categoryId, widget.category.categoryName, widget.userId);
       }
-      _animationController.reset();
+      _animationController.reset(); // Reset animation
     });
   }
 
+  // Checks if the user has completed the quiz
   bool isQuizComplete(int score, int totalQuizzes) {
     return score == totalQuizzes;
   }
 
+  // Displays the results dialog after completing the quiz
   void _showResults(String categoryId, String categoryName, String userId) {
     final bool isComplete = isQuizComplete(_score, _quizzes.length);
-
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: false, // Prevent closing by tapping outside
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.quizComplete),
@@ -140,7 +143,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                 );
 
                 Navigator.of(context).pop();
-                 Navigator.pop(context, true); // Pass a flag to indicate data has changed
+                Navigator.pop(context, true); // Pass a flag to indicate data has changed
               },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.green, // Set the desired color for the Back to Categories button
@@ -173,6 +176,15 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                     backgroundColor: Colors.grey[200],
                     valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
                   ),
+                  const SizedBox(height: 16),
+                  // Add question number display
+                  if (_quizzes.isNotEmpty)
+                    Text(
+                      '${_quizzes.length} / ${_currentQuizIndex + 1}', // Show current question/total questions
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  const SizedBox(height: 16),
+                 // Quiz content
                   Expanded(
                     child: PageView.builder(
                       controller: _pageController,
@@ -190,6 +202,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
     );
   }
 
+  // Builds a single quiz card
   Widget _buildQuizCard(Quiz quiz) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
@@ -253,11 +266,12 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
     );
   }
 
+  // Builds answer buttons for the quiz
   List<Widget> _buildAnswerButtons(Quiz quiz) {
     final answers = [quiz.answer1, quiz.answer2, quiz.answer3, quiz.answer4];
     return answers.map((answer) {
-      final isSelected = _selectedAnswer == answer;
-      final isCorrect = quiz.correctAnswer == answer;
+      final isSelected = _selectedAnswer == answer; // Check if answer is selected
+      final isCorrect = quiz.correctAnswer == answer; // Check if answer is correct
 
       Color getButtonColor() {
         if (!_answered) return Colors.white;
@@ -279,7 +293,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
             );
           },
           child: ElevatedButton(
-            onPressed: () => _handleAnswer(answer),
+            onPressed: () => _handleAnswer(answer),  // Disable if answered
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.black87,
               backgroundColor: getButtonColor(),
