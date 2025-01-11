@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class NotificationIcon extends StatefulWidget {
-  // Accepts a list of notifications as input
   final List<String> notifications;
 
   const NotificationIcon({
@@ -14,46 +13,45 @@ class NotificationIcon extends StatefulWidget {
 }
 
 class _NotificationIconState extends State<NotificationIcon> {
-  late List<String> notifications; // Local copy of notifications for state management
-  bool _isDropdownOpen = false; // Tracks whether the dropdown is open
+  late List<String> notifications;
+  bool _isDropdownOpen = false;
 
   @override
   void initState() {
     super.initState();
-    // Initialize the local notifications list with the provided notifications
     notifications = List<String>.from(widget.notifications);
   }
 
-  // Toggles the dropdown menu's visibility
   void _toggleDropdown() {
     setState(() {
-      _isDropdownOpen = !_isDropdownOpen; // Flip the dropdown state
+      _isDropdownOpen = !_isDropdownOpen;
+      print('Dropdown toggled: $_isDropdownOpen');
     });
   }
 
-  // Removes a notification by index and updates the UI
-  void _removeNotification(int index) { 
+  void _removeNotification(int index) {
     if (index >= 0 && index < notifications.length) {
       setState(() {
-        notifications.removeAt(index); // Remove the selected notification
-        // Close the dropdown if no notifications remain
+        notifications.removeAt(index);
         if (notifications.isEmpty) {
           _isDropdownOpen = false;
         }
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    final isRtl = Directionality.of(context) == TextDirection.rtl; // Check text direction
-    final screenWidth = MediaQuery.of(context).size.width; // Get the screen width
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Stack(
       clipBehavior: Clip.none,
       children: [
         GestureDetector(
-          onTap: _toggleDropdown, // Toggle the dropdown when tapped
+          onTap: () {
+            _toggleDropdown();
+          },
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -69,7 +67,6 @@ class _NotificationIconState extends State<NotificationIcon> {
         ),
         if (_isDropdownOpen)
           Positioned(
-            // The dropdown menu, positioned dynamically based on locale
             top: 40,
             left: isRtl ? 0 : null,
             right: isRtl ? null : 0,
@@ -79,7 +76,7 @@ class _NotificationIconState extends State<NotificationIcon> {
               color: Colors.white,
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxWidth: screenWidth * 0.7, // Dynamically adjust to 70% of screen width
+                  maxWidth: screenWidth * 0.7,
                   maxHeight: notifications.length > 4 ? 300 : double.infinity,
                 ),
                 child: ListView.separated(
@@ -101,20 +98,18 @@ class _NotificationIconState extends State<NotificationIcon> {
                       ),
                       title: Text(
                         notifications[index],
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w500),
                         textAlign: isRtl ? TextAlign.right : TextAlign.left,
                       ),
-                      trailing: IconButton(
-                        icon: const Icon(
+                      // Separate GestureDetector for close icon to avoid conflicts
+                      trailing: GestureDetector(
+                        onTap: () {
+                          _removeNotification(index);
+                        },
+                        child: const Icon(
                           Icons.close,
                           color: Colors.red,
                         ),
-                        onPressed: () {
-                          _removeNotification(index);
-                        },
                       ),
                     );
                   },

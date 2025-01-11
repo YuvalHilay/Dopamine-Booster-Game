@@ -200,142 +200,150 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // Displays the change password dialog with three password fields
   void _showChangePasswordDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text(
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: Center(
+              child: Text(
                 AppLocalizations.of(context)!.changePassword,
                 style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
               ),
-              content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    MyTextField(
-                      controller: currentPasswordController,
-                      hintText: AppLocalizations.of(context)!.currentPassword,
-                      obscureText: obscureCurrentPassword,
-                      keyboardType: TextInputType.visiblePassword,
-                      prefixIcon: const Icon(CupertinoIcons.lock_fill),
-                      validator: FormValidators.validatePassword,
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            obscureCurrentPassword = !obscureCurrentPassword;
-                            iconCurrentPassword = obscureCurrentPassword
-                                ? CupertinoIcons.eye_fill
-                                : CupertinoIcons.eye_slash_fill;
-                          });
-                        },
-                        icon: Icon(iconCurrentPassword),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    MyTextField(
-                      controller: newPasswordController,
-                      hintText: AppLocalizations.of(context)!.newPassword,
-                      obscureText: obscureNewPassword,
-                      keyboardType: TextInputType.visiblePassword,
-                      prefixIcon: const Icon(CupertinoIcons.lock_fill),
-                      validator: FormValidators.validatePassword,
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            obscureNewPassword = !obscureNewPassword;
-                            iconNewPassword = obscureNewPassword
-                                ? CupertinoIcons.eye_fill
-                                : CupertinoIcons.eye_slash_fill;
-                          });
-                        },
-                        icon: Icon(iconNewPassword),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    MyTextField(
-                      controller: confirmPasswordController,
-                      hintText: AppLocalizations.of(context)!.confirmPass,
-                      obscureText: obscureConfirmPassword,
-                      keyboardType: TextInputType.visiblePassword,
-                      prefixIcon: const Icon(CupertinoIcons.lock_fill),
-                      validator: (value) {
-                        if (value != newPasswordController.text) {
-                          return AppLocalizations.of(context)!.passwordMismatch;
-                        }
-                        return null;
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  MyTextField(
+                    controller: currentPasswordController,
+                    hintText: AppLocalizations.of(context)!.currentPassword,
+                    obscureText: obscureCurrentPassword,
+                    keyboardType: TextInputType.visiblePassword,
+                    prefixIcon: const Icon(CupertinoIcons.lock_fill),
+                    validator: FormValidators.validatePassword,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          obscureCurrentPassword = !obscureCurrentPassword;
+                          iconCurrentPassword = obscureCurrentPassword
+                              ? CupertinoIcons.eye_fill
+                              : CupertinoIcons.eye_slash_fill;
+                        });
                       },
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            obscureConfirmPassword = !obscureConfirmPassword;
-                            iconConfirmPassword = obscureConfirmPassword
-                                ? CupertinoIcons.eye_fill
-                                : CupertinoIcons.eye_slash_fill;
-                          });
-                        },
-                        icon: Icon(iconConfirmPassword),
+                      icon: Icon(iconCurrentPassword),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  MyTextField(
+                    controller: newPasswordController,
+                    hintText: AppLocalizations.of(context)!.newPassword,
+                    obscureText: obscureNewPassword,
+                    keyboardType: TextInputType.visiblePassword,
+                    prefixIcon: const Icon(CupertinoIcons.lock_fill),
+                    validator: FormValidators.validatePassword,
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          obscureNewPassword = !obscureNewPassword;
+                          iconNewPassword = obscureNewPassword
+                              ? CupertinoIcons.eye_fill
+                              : CupertinoIcons.eye_slash_fill;
+                        });
+                      },
+                      icon: Icon(iconNewPassword),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  MyTextField(
+                    controller: confirmPasswordController,
+                    hintText: AppLocalizations.of(context)!.confirmPass,
+                    obscureText: obscureConfirmPassword,
+                    keyboardType: TextInputType.visiblePassword,
+                    prefixIcon: const Icon(CupertinoIcons.lock_fill),
+                    validator: (value) {
+                      if (value != newPasswordController.text) {
+                        return AppLocalizations.of(context)!.passwordMismatch;
+                      }
+                      return null;
+                    },
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          obscureConfirmPassword = !obscureConfirmPassword;
+                          iconConfirmPassword = obscureConfirmPassword
+                              ? CupertinoIcons.eye_fill
+                              : CupertinoIcons.eye_slash_fill;
+                        });
+                      },
+                      icon: Icon(iconConfirmPassword),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Cancel button
+                  Flexible(
+                    child: ElevatedButton(
+                      child: Text(
+                        AppLocalizations.of(context)!.cancel,
+                        style: GoogleFonts.poppins(
+                          color: Colors.red,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      onPressed: () {
+                        // Clear the controllers' text when the cancel button is pressed
+                        currentPasswordController.clear();
+                        newPasswordController.clear();
+                        confirmPasswordController.clear();
+                        // Close the dialog
+                        Navigator.of(context).pop();
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 5), // Add some spacing between the buttons
+                  // Change password button
+                  Flexible(
+                    child: ElevatedButton(
+                      child: Text(
+                        AppLocalizations.of(context)!.changePassword,
+                        style: GoogleFonts.poppins(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      onPressed: () {
+                        // TODO: Implement password change logic
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                ],
               ),
-              actions: [
-                // cancel button
-                ElevatedButton(
-                  child: Text(
-                    AppLocalizations.of(context)!.cancel,
-                    style: GoogleFonts.poppins(
-                      color: Colors.red,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  onPressed: () {
-                    // Clear the controllers' text when the cancel button is pressed
-                    currentPasswordController.clear();
-                    newPasswordController.clear();
-                    confirmPasswordController.clear();
-                    // Close the dialog
-                    Navigator.of(context).pop();
-                  },
-                  style: TextButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.inversePrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
-                // Change password button
-                ElevatedButton(
-                  child: Text(
-                    AppLocalizations.of(context)!.changePassword,
-                    style: GoogleFonts.poppins(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.inversePrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    //padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  ),
-                  onPressed: () {
-                    // TODO: Implement password change logic
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
+            ],
+          );
+        },
+      );
+    },
+  );
+}
 }
