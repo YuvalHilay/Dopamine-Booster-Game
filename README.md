@@ -1,4 +1,4 @@
-![App Icon](./FlutterApp/assets/app_icon.png)
+![App Icon](./FlutterApp/assets/app_icon1.png)
 
 # Dopamine Booster Game
 
