@@ -192,11 +192,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 8),
+            // Description: content of the card
             Text(
               description,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
-                color: Colors.black87,
+                color: Theme.of(context).colorScheme.inversePrimary,
               ),
             ),
             const SizedBox(height: 16),

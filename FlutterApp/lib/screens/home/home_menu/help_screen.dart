@@ -155,7 +155,7 @@ class HelpScreen extends StatelessWidget {
                               child: Text(
                                 item.trim().startsWith('•') ? item.substring(1).trim() : item,
                                 style: GoogleFonts.poppins(
-                                  textStyle: TextStyle(fontSize: 16, color: Colors.black87),
+                                  textStyle: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.inversePrimary),
                                 ),
                               ),
                             ),
@@ -167,7 +167,7 @@ class HelpScreen extends StatelessWidget {
                 : Text(
                     content,
                     style: GoogleFonts.poppins(
-                      textStyle: TextStyle(fontSize: 16, color: Colors.black87),
+                      textStyle: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.inversePrimary),
                     ),
                   ),
           ),

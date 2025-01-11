@@ -1,5 +1,8 @@
 # Dopamine Booster Game
 
+![App Icon](assets/app_icon.png)
+
+
 ## Overview
 
 **Dopamine Booster Game** is a mobile application designed to assist individuals with ADHD in managing their symptoms through gamification and neuroscientific principles. The app leverages engaging and structured activities to improve focus, reduce impulsivity, and encourage the development of healthy habits.

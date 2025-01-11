@@ -298,7 +298,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     currentPasswordController.clear();
                     newPasswordController.clear();
                     confirmPasswordController.clear();
-
                     // Close the dialog
                     Navigator.of(context).pop();
                   },
@@ -325,7 +324,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    //padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
                   onPressed: () {
                     // TODO: Implement password change logic
