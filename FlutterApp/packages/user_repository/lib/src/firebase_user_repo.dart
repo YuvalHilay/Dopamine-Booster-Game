@@ -138,6 +138,40 @@ class FirebaseUserRepo implements UserRepository {
     }
   }
 
+
+  // Method to change the user's password
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      User? user = _firebaseAuth.currentUser;
+
+      if (user == null) {
+        throw Exception("User is not logged in.");
+      }
+
+      // Re-authenticate the user to verify the current password
+      AuthCredential credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: currentPassword,
+      );
+
+      await user.reauthenticateWithCredential(credential);
+
+      // Update the password
+      await user.updatePassword(newPassword);
+
+      // Optionally, update user data in Firestore (if needed)
+      await usersCollection.doc(user.uid).update({
+        'password': newPassword, // Update the password field if necessary
+      });
+    } catch (e) {
+      rethrow; // Rethrow the error to be caught in the bloc
+    }
+  }
+
+
   @override
   // Sends a password reset email to the user with the provided [email].
   Future<void> sendPasswordResetEmail(String email) async {

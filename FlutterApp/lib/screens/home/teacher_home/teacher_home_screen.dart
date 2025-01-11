@@ -39,7 +39,7 @@ class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
       AddQuizScreen(
           authorName: '${widget.user.firstName} ${widget.user.lastName}'),
       const AddCategoriesScreen(),
-      const ProfileScreen(),
+      ProfileScreen(email: widget.user.email, userName: '${widget.user.firstName} ${widget.user.lastName}'),
     ];
   }
 

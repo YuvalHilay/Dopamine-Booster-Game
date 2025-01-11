@@ -84,7 +84,7 @@ class _ContactScreenState extends State<ContactScreen> {
           child: CustomScrollView(
             slivers: [
               SliverAppBar(
-                expandedHeight: 200.0,
+                expandedHeight: 180.0,
                 floating: false,
                 pinned: true,
                 flexibleSpace: FlexibleSpaceBar(
@@ -92,7 +92,7 @@ class _ContactScreenState extends State<ContactScreen> {
                     AppLocalizations.of(context)!.contactUs,
                     style: GoogleFonts.poppins(
                       textStyle: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -106,7 +106,7 @@ class _ContactScreenState extends State<ContactScreen> {
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.all(24.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: Card(
                     elevation: 8,
                     shape: RoundedRectangleBorder(
@@ -137,7 +137,7 @@ class _ContactScreenState extends State<ContactScreen> {
                               style: GoogleFonts.poppins(
                                 textStyle: TextStyle(
                                   fontSize: 16,
-                                  color: Colors.grey[600],
+                                  color: Theme.of(context).colorScheme.inversePrimary,
                                 ),
                               ),
                             ),
@@ -237,7 +237,7 @@ class _ContactScreenState extends State<ContactScreen> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: GoogleFonts.poppins(color: Colors.grey[600]),
+        labelStyle: GoogleFonts.poppins(color: Colors.black),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide.none,

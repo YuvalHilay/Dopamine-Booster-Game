@@ -1,6 +1,3 @@
-
-import 'models.dart';
-
 class Grade {
   String categoryId;
   String categoryName;

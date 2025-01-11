@@ -18,12 +18,14 @@ class MyDrawer extends StatelessWidget {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
+                // help button
                 _buildDrawerItem(
                   context,
                   icon: Icons.home,
                   title: AppLocalizations.of(context)!.home,
                   onTap: () => Navigator.pop(context),
                 ),
+                // help button
                 _buildDrawerItem(
                   context,
                   icon: Icons.help_outline,
@@ -33,6 +35,7 @@ class MyDrawer extends StatelessWidget {
                     Navigator.pushNamed(context, '/help');
                   },
                 ),
+                // contact button
                 _buildDrawerItem(
                   context,
                   icon: Icons.contact_support_outlined,
@@ -42,6 +45,7 @@ class MyDrawer extends StatelessWidget {
                     Navigator.pushNamed(context, '/contact');
                   },
                 ),
+                // settings button
                 _buildDrawerItem(
                   context,
                   icon: Icons.settings,

@@ -37,80 +37,82 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Avatar Section
-              Center(
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        _showAvatarDialog(context);
-                      },
-                      child: CircleAvatar(
-                        radius: 80,
-                        backgroundImage: AssetImage(selectedAvatar),
-                        backgroundColor: Colors.orange[100],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Avatar Section
+                Center(
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          _showAvatarDialog(context);
+                        },
+                        child: CircleAvatar(
+                          radius: 80,
+                          backgroundImage: AssetImage(selectedAvatar),
+                          backgroundColor: Colors.orange[100],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      AppLocalizations.of(context)!.changeAvatar,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue[800],
+                      const SizedBox(height: 10),
+                      Text(
+                        AppLocalizations.of(context)!.changeAvatar,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue[800],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 32),
-              // Leaderboard Section
-              _buildCard(
-                title: AppLocalizations.of(context)!.leaderboard,
-                icon: Icons.leaderboard,
-                color: Colors.blue,
-                description: AppLocalizations.of(context)!.leaderboardMsg,
-                leaderboard: FutureBuilder<List<Map<String, dynamic>>>( // FutureBuilder for leaderboard data
-                  future: _quizRepository.getLeaderboard(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    }
-
-                    if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    }
-
-                    final leaderboard = snapshot.data!;
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        for (var i = 0; i < leaderboard.length; i++)
-                          _buildLeaderboardEntry(
-                            position: i + 1,
-                            userName: leaderboard[i]['userName'] as String,   
-                            score: leaderboard[i]['totalScore'] as double,
-                          ),
-                      ],
-                    );
-                  },
+                const SizedBox(height: 32),
+                // Leaderboard Section
+                _buildCard(
+                  title: AppLocalizations.of(context)!.leaderboard,
+                  icon: Icons.leaderboard,
+                  color: Colors.blue,
+                  description: AppLocalizations.of(context)!.leaderboardMsg,
+                  leaderboard: FutureBuilder<List<Map<String, dynamic>>>( // FutureBuilder for leaderboard data
+                    future: _quizRepository.getLeaderboard(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      }
+          
+                      if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      }
+          
+                      final leaderboard = snapshot.data!;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (var i = 0; i < leaderboard.length; i++)
+                            _buildLeaderboardEntry(
+                              position: i + 1,
+                              userName: leaderboard[i]['userName'] as String,   
+                              score: leaderboard[i]['totalScore'] as double,
+                            ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              // Achievements Section
-              _buildCard(
-                title: AppLocalizations.of(context)!.achievements,
-                icon: Icons.star,
-                color: Colors.orange,
-                description: AppLocalizations.of(context)!.achievementsMsg,
-              ),
-              const SizedBox(height: 32)
-            ],
+                const SizedBox(height: 16),
+                // Achievements Section
+                _buildCard(
+                  title: AppLocalizations.of(context)!.achievements,
+                  icon: Icons.star,
+                  color: Colors.orange,
+                  description: AppLocalizations.of(context)!.achievementsMsg,
+                ),
+                const SizedBox(height: 32)
+              ],
+            ),
           ),
         ),
       ),

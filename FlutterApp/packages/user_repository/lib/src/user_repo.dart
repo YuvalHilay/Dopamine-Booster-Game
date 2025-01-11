@@ -20,6 +20,9 @@ abstract class UserRepository {
   // Signs in the user using Google authentication.
   Future<void> signInWithGoogle();
 
+// Method to change the user's password
+  Future<void> changePassword({required String currentPassword, required String newPassword});
+
   // Sends a password reset email to the user with the provided [email].
   Future<void> sendPasswordResetEmail(String email);
 }

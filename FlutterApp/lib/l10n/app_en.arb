@@ -71,6 +71,10 @@
     "@errPassword": {
         "description": "Enter a valid password."
     },
+    "passwordMismatch" : "Passwords Mismatch",
+    "@passwordMismatch": {
+        "description": "Passwords Mismatch"
+    },
     "signupWith" : " Sign up with ", 
     "@signupWith": {
         "description": " Sign up with "
@@ -78,6 +82,10 @@
     "fillField" : "Please Fill in this field.", 
     "@fillField": {
         "description": "Please Fill in this field."
+    },
+    "currentPassword" : "Current Password", 
+    "@currentPassword": {
+        "description": "Current Password"
     },
     "math" : "Math", 
     "@math": {
@@ -395,6 +403,10 @@
     "@resetPassword": {
         "description": "Reset Password"
     },
+    "newPassword" : "New Password", 
+    "@newPassword": {
+        "description": "New Password"
+    },
     "passwordResetEmailSent" : "Password reset email has been sent", 
     "@passwordResetEmailSent": {
         "description": "Password reset email has been sent"
@@ -451,9 +463,25 @@
     "@changeAvatar": {
         "description": "Change Avatar"
     },
+    "changePassword" : "Change Password", 
+    "@changePassword": {
+        "description": "Change Password"
+    },
     "achievements" : "Achievements", 
     "@achievements": {
         "description": "Achievements"
+    },
+    "dopamineGameDescription": "Our game is designed to stimulate dopamine production in the brain through engaging activities. This can help improve attention, focus, and impulse control.",
+    "@dopamineGameDescription": {
+        "description": "Description of the game's purpose, emphasizing dopamine stimulation."
+    },
+    "gameFeatures": "• Interactive games to boost concentration\n• Progress tracking\n• Customizable difficulty levels\n• Educational content integrated with gameplay",
+    "@gameFeatures": {
+        "description": "Features of the game presented as a bullet-pointed list."
+    },
+    "tipsForSuccess": "• Play regularly for best results\n• Start with shorter sessions and gradually increase\n• Use the app in conjunction with other ADHD management strategies",
+    "@tipsForSuccess": {
+        "description": "Tips to help users achieve the best outcomes when using the app."
     },
     "chooseAvatar" : "Choose Your Avatar", 
     "@chooseAvatar": {
@@ -470,6 +498,10 @@
     "achievementsMsg" : "Unlock badges as you progress!", 
     "@achievementsMsg": {
         "description": "Unlock badges as you progress!"
+    },
+    "adhdDescription": "Attention-Deficit/Hyperactivity Disorder (ADHD) is a neurodevelopmental disorder characterized by persistent patterns of inattention, hyperactivity, and impulsivity.",
+    "@adhdDescription": {
+        "description": "Description text explaining ADHD in English."
     },
     "termsCheckBox" : "I agree to the terms and conditions",
     "@termsCheckBox": {

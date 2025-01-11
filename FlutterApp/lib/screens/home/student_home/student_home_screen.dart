@@ -32,12 +32,11 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     _pages = [
       HomeScreen(gender: widget.user.gender),
       CategoriesScreen(userId: widget.user.userId, userName: '${widget.user.firstName} ${widget.user.lastName}'),
-      Placeholder(
-        child: Center(
+      Center(
             child: Image.asset('assets/images/boostergameimg.png',
-                fit: BoxFit.fill)),
+                fit: BoxFit.fill)
       ),
-      const ProfileScreen(),
+      ProfileScreen(email: widget.user.email, userName: '${widget.user.firstName} ${widget.user.lastName}'),
     ];
   }
 
