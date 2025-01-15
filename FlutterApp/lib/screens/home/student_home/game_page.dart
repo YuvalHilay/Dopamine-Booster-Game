@@ -79,7 +79,6 @@ class _GamePageState extends State<GamePage> {
     setState(() {
       isDownloading = true; // Start download
     });
-
     try {
       // Firebase Storage file URL
       String fileUrl = 'gs://dopamine-game.firebasestorage.app/DopamineGame64.apk';
@@ -153,8 +152,6 @@ class _GamePageState extends State<GamePage> {
   if (countdown > 0 && mounted) {
     setState(() {
       countdown--;
-      print("Countdown: $countdown");
-
     });
   } else {
     timer.cancel();
