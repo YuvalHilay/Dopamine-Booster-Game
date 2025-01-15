@@ -171,6 +171,20 @@ class FirebaseUserRepo implements UserRepository {
     }
   }
 
+  Future<String> getStudentCount() async {
+    try {
+      final querySnapshot = await usersCollection
+          .where('userRole', isEqualTo: 'Student')
+          .get();
+
+      final int count = querySnapshot.docs.length;
+
+      return count.toString();
+    } catch (e) {
+      print("Error fetching student count: $e");
+      return "0"; // Return "0" or an error message in case of failure
+    }
+  }
 
   @override
   // Sends a password reset email to the user with the provided [email].

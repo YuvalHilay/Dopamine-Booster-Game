@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:quiz_repository/quiz.repository.dart';
+import 'package:user_repository/user_repository.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback onNavigateToAddQuiz;
@@ -14,8 +15,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final QuizRepository quizRepository = FirebaseQuizRepo(); // Initialize the quiz repository
+  final UserRepository userRepository = FirebaseUserRepo(); // Initialize the quiz repository
   String categoryCount = '0';
   String quizCount = '0';
+  String studentsCount = '0';
 
   @override
   void initState() {
@@ -27,11 +30,12 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final categories = await quizRepository.getCategoryCount();
       final quizzes = await quizRepository.getQuizCount();
-
+      final students = await userRepository.getStudentCount();
       // Use setState to update UI
       setState(() {
         categoryCount = categories;
         quizCount = quizzes;
+        studentsCount = students;
       });
     } catch (e) {
       print('Failed to get counts: $e');
@@ -72,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
         image: DecorationImage(
           image: AssetImage('assets/images/teacherBG.png'),
           fit: BoxFit.cover,
-          opacity: 0.7,
+          opacity: 0.3,
         ),
       ),
       child: Column(
@@ -186,7 +190,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 AppLocalizations.of(context)!.categories, Color(0xFF6A11CB)),
             _buildStatCard(context, quizCount,
                 AppLocalizations.of(context)!.quizzes, Color(0xFF2575FC)),
-            _buildStatCard(context, '3', AppLocalizations.of(context)!.activeStudents, Color(0xFFFFA500)),
+            _buildStatCard(context, studentsCount, 
+            AppLocalizations.of(context)!.activeStudents, Color(0xFFFFA500)),
           ],
         ),
       ],
@@ -199,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       color: color.withOpacity(0.8),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
             Text(
@@ -342,4 +347,5 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
     return subtitles[index % subtitles.length];
   }
+
 }

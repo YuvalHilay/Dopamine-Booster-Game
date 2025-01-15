@@ -20,6 +20,8 @@ abstract class UserRepository {
   // Signs in the user using Google authentication.
   Future<void> signInWithGoogle();
 
+  Future<String> getStudentCount();
+  
 // Method to change the user's password
   Future<void> changePassword({required String currentPassword, required String newPassword});
 

@@ -4,6 +4,7 @@ import 'package:Dopamine_Booster/screens/home/home_menu/profile_screen.dart';
 import 'package:Dopamine_Booster/screens/home/teacher_home/add_caterogies_page.dart';
 import 'package:Dopamine_Booster/screens/home/teacher_home/add_quiz_page.dart';
 import 'package:Dopamine_Booster/screens/home/teacher_home/home_page.dart';
+import 'package:Dopamine_Booster/screens/home/teacher_home/teacher_stats_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:user_repository/user_repository.dart';

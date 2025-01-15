@@ -84,6 +84,20 @@ class _MyAppViewState extends State<MyAppView> with WidgetsBindingObserver {
     _preferencesService.setDarkMode(isDarkMode); // Save preference
   }
 
+  void _toggleSound(bool isEnabled) {
+    setState(() {
+      _isSoundEnabled = isEnabled;
+    });
+    _preferencesService.setSoundEnabled(isEnabled); // Save preference
+  }
+
+  void _toggleNotifications(bool isEnabled) {
+    setState(() {
+      _isNotificationsEnabled = isEnabled;
+    });
+    _preferencesService.setNotificationsEnabled(isEnabled); // Save preference
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -105,9 +119,9 @@ class _MyAppViewState extends State<MyAppView> with WidgetsBindingObserver {
       themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light, // Set theme dynamically
       initialRoute: '/',
       routes: {
-        '/help': (context) => const HelpScreen(),
+        '/help': (context) =>  HelpScreen(),
         '/contact': (context) => const ContactScreen(),
-        '/settings': (context) => SettingsScreen(setLocale: _setLocale, toggleTheme: _toggleTheme),
+        '/settings': (context) => SettingsScreen(setLocale: _setLocale, toggleTheme: _toggleTheme, toggleSound: _toggleSound,toggleNotifications: _toggleNotifications),
       },
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {

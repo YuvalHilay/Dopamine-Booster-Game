@@ -1,9 +1,13 @@
+import 'package:Dopamine_Booster/components/popup_msg.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:Dopamine_Booster/utils/PreferencesService.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HelpScreen extends StatelessWidget {
-  const HelpScreen({Key? key}) : super(key: key);
+  HelpScreen({Key? key}) : super(key: key);
+
+  final PreferencesService _preferencesService = PreferencesService();
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +76,12 @@ class HelpScreen extends StatelessWidget {
                         AppLocalizations.of(context)!.helpSection4,
                         AppLocalizations.of(context)!.tipsForSuccess,
                         Icons.lightbulb,
+                      ),
+                      _buildSection(
+                        context,
+                        AppLocalizations.of(context)!.helpSection5,
+                        AppLocalizations.of(context)!.gameInstallHelp,
+                        Icons.install_desktop,
                       ),
                       const SizedBox(height: 20),
                       Center(
@@ -171,9 +181,28 @@ class HelpScreen extends StatelessWidget {
                     ),
                   ),
           ),
+          // Reset button in game install section
+          if (title == AppLocalizations.of(context)!.helpSection5) 
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: () async {
+                  await _preferencesService.setAPKInstalledStatus(false); 
+                  // Display a message to the user after resetting the status.
+                  displayMessageToUser(AppLocalizations.of(context)!.resetInstallSuccessMsg,context);
+                },
+                child: Text(AppLocalizations.of(context)!.resetInstallBtn),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
   }
 }
-

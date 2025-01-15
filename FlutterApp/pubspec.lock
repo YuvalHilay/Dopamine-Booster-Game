@@ -145,6 +145,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.7"
+  external_app_launcher:
+    dependency: "direct main"
+    description:
+      name: external_app_launcher
+      sha256: "69d843ae16598cbf86be8d65ae5f206bb403fbfb75ca9aaaa9ea91b15b040571"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -273,6 +281,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.10.6"
+  fl_chart:
+    dependency: "direct main"
+    description:
+      name: fl_chart
+      sha256: c1e26c7e48496be85104c16c040950b0436674cdf0737f3f6e95511b2529b592
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.63.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -406,7 +422,7 @@ packages:
     source: hosted
     version: "0.12.4+3"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
       sha256: b9c29a161230ee03d3ccf545097fccd9b87a5264228c5d348202e0f0c28f9010
@@ -581,6 +597,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  open_file_plus:
+    dependency: "direct main"
+    description:
+      name: open_file_plus
+      sha256: "01ad7011d46d253aa22e5f0bc7345ca49cfe652c50ae9b0af945491c1728a8c3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.4.1+1"
   path:
     dependency: transitive
     description:
@@ -598,7 +622,7 @@ packages:
     source: hosted
     version: "1.1.0"
   path_provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider
       sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"

@@ -235,6 +235,10 @@
     "@helpSection4": {
         "description": "Tips for Success"
     },
+    "helpSection5" : "Game installation and Mode Reset", 
+    "@helpSection5": {
+        "description": "Game installation and Mode Reset"
+    },
     "cancel" : "Cancel", 
     "@cancel": {
         "description": "Cancel"
@@ -379,6 +383,18 @@
     "@points": {
         "description": "{score} Points"
     },
+    "downloadBtn" : "Download And Install", 
+    "@downloadBtn": {
+        "description": "Download And Install"
+    },
+    "failedGameStart" : "Failed to start the game. Please try again later.", 
+    "@failedGameStart": {
+        "description": "Failed to start the game. Please try again later."
+    },
+    "yourScore" : "Your score: {score} / {length}", 
+    "@yourScore": {
+        "description": "Minimum 8 characters"
+    },
     "oneNum" : "1 Number", 
     "@oneNum": {
         "description": "1 Number"
@@ -386,6 +402,14 @@
     "minCharPass" : "Minimum 8 characters", 
     "@minCharPass": {
         "description": "Minimum 8 characters"
+    },
+    "errorDownloadApk" : "Error downloading the game installation file.", 
+    "@errorDownloadApk": {
+        "description": "Error downloading the game installation file."
+    },
+    "errorInstallApk" : "Failed to open the game for installation.", 
+    "@errorInstallApk": {
+        "description": "Failed to open the game for installation."
     },
     "forgotPassword" : "Forgot Password", 
     "@forgotPassword": {
@@ -459,6 +483,14 @@
     "@leaderboard": {
         "description": "Leaderboard"
     },
+    "resetInstallBtn" : "Reset Installation Status", 
+    "@resetInstallBtn": {
+        "description": "Reset Installation Status"
+    },
+    "resetInstallSuccessMsg" : "Installation status has been reset. You can now reinstall the game.", 
+    "@resetInstallSuccessMsg": {
+        "description": "Installation status has been reset. You can now reinstall the game."
+    },
     "changeAvatar" : "Change Avatar", 
     "@changeAvatar": {
         "description": "Change Avatar"
@@ -471,6 +503,14 @@
     "@achievements": {
         "description": "Achievements"
     },
+    "startGame" : "Start Game", 
+    "@startGame": {
+        "description": "Start Game"
+    },
+    "gameAvailableIn": "It's learning time,\nGame will be available again in {countdown0}:{countdown1}:{countdown2}",
+    "@gameAvailableIn": {
+        "description": "Game availability message with countdown"
+    },
     "dopamineGameDescription": "Our game is designed to stimulate dopamine production in the brain through engaging activities. This can help improve attention, focus, and impulse control.",
     "@dopamineGameDescription": {
         "description": "Description of the game's purpose, emphasizing dopamine stimulation."
@@ -482,6 +522,10 @@
     "tipsForSuccess": "• Play regularly for best results\n• Start with shorter sessions and gradually increase\n• Use the app in conjunction with other ADHD management strategies",
     "@tipsForSuccess": {
         "description": "Tips to help users achieve the best outcomes when using the app."
+    },
+    "gameInstallHelp": "You need to install the game once in order to play. If the game has been deleted, you can reset the installation status and reinstall the game.",
+    "@gameInstallHelp": {
+        "description": "You need to install the game once in order to play. If the game has been deleted, you can reset the installation status and reinstall the game."
     },
     "chooseAvatar" : "Choose Your Avatar", 
     "@chooseAvatar": {

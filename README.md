@@ -1,6 +1,6 @@
-![App Icon](./FlutterApp/assets/app_icon1.png)
-
 # Dopamine Booster Game
+
+![App Icon](./FlutterApp/assets/app_icon1.png)
 
 ## Overview
 
@@ -18,6 +18,7 @@ ADHD affects millions of individuals worldwide, manifesting as persistent inatte
 
 ### 2. **Personalized Categories**
 - Users can select from categories such as Sports, Science, History, Math, Geography, Physics, and English.
+- Categories can be made of directly by the student teacher.
 - Localized category names provide accessibility for diverse user bases.
 
 ### 3. **Progress Tracking**
@@ -53,7 +54,7 @@ ADHD affects millions of individuals worldwide, manifesting as persistent inatte
 2. **Positive Reinforcement:** Rewards and progress tracking encourage users to build habits and celebrate milestones.
 3. **Cognitive Development:** Quizzes stimulate cognitive functions and promote learning in various subjects.
 4. **Accessible Design:** Multilingual support and adaptive UI cater to a wide audience, ensuring inclusivity.
-5. **Collaborative Learning:** Enables collaboration between teachers and students to foster a supportive learning environment.
+5. **Collaborative Learning:** Enables collaboration between teachers and students to foster a supportive learning environment in school or at home.
 
 ---
 

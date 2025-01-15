@@ -9,15 +9,22 @@ class QuizScreen extends StatefulWidget {
   final String userId;
   final String userName;
 
-  const QuizScreen({Key? key, required this.category, required this.userId, required this.userName}) : super(key: key);
+  const QuizScreen(
+      {Key? key,
+      required this.category,
+      required this.userId,
+      required this.userName})
+      : super(key: key);
 
   @override
   _QuizScreenState createState() => _QuizScreenState();
 }
 
 class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
-  final QuizRepository quizRepository = FirebaseQuizRepo(); // Initialize the quiz repository
-  final QuizRepository gradeRepository = FirebaseQuizRepo(); // Initialize the quiz repository
+  final QuizRepository quizRepository =
+      FirebaseQuizRepo(); // Initialize the quiz repository
+  final QuizRepository gradeRepository =
+      FirebaseQuizRepo(); // Initialize the quiz repository
   late PageController _pageController;
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -37,7 +44,8 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _animation = CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
+    _animation =
+        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
 
     _loadQuizzes(); // Load quizzes for the selected category
   }
@@ -45,10 +53,11 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
   // Fetches quizzes for the selected category
   Future<void> _loadQuizzes() async {
     try {
-      List<Quiz> quizzes = await quizRepository.getQuizzesByCategory(widget.category.categoryId);
+      List<Quiz> quizzes =
+          await quizRepository.getQuizzesByCategory(widget.category.categoryId);
       setState(() {
         _quizzes = quizzes;
-        _isLoading = false;  // Set loading to false once quizzes are loaded
+        _isLoading = false; // Set loading to false once quizzes are loaded
       });
     } catch (e) {
       displayMessageToUser('Failed to load quizzes!', context);
@@ -65,7 +74,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
-   // Handles the user's answer selection
+  // Handles the user's answer selection
   void _handleAnswer(String answer) {
     if (_answered) return;
 
@@ -91,7 +100,8 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
           _selectedAnswer = null; // Reset selected answer
         });
       } else {
-        _showResults(widget.category.categoryId, widget.category.categoryName, widget.userId);
+        _showResults(widget.category.categoryId, widget.category.categoryName,
+            widget.userId);
       }
       _animationController.reset(); // Reset animation
     });
@@ -111,7 +121,8 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.quizComplete),
-          content: Text('Your score: $_score / ${_quizzes.length}'),
+          content: Text(
+              AppLocalizations.of(context)!.yourScore(_score, _quizzes.length)),
           actions: <Widget>[
             TextButton(
               child: Text(AppLocalizations.of(context)!.tryAgain),
@@ -126,7 +137,8 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                 _pageController.jumpToPage(0);
               },
               style: TextButton.styleFrom(
-                foregroundColor: Colors.blue, // Set the desired color for the Try Again button
+                foregroundColor: Colors
+                    .blue, // Set the desired color for the Try Again button
               ),
             ),
             TextButton(
@@ -139,14 +151,16 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                   widget.userName,
                   isComplete,
                   userId,
-                  '$_score/${_quizzes.length}', // Save as percentage or normalized score 
+                  '$_score/${_quizzes.length}', // Save as percentage or normalized score
                 );
 
                 Navigator.of(context).pop();
-                Navigator.pop(context, true); // Pass a flag to indicate data has changed
+                Navigator.pop(
+                    context, true); // Pass a flag to indicate data has changed
               },
               style: TextButton.styleFrom(
-                foregroundColor: Colors.green, // Set the desired color for the Back to Categories button
+                foregroundColor: Colors
+                    .green, // Set the desired color for the Back to Categories button
               ),
             ),
           ],
@@ -154,7 +168,6 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -174,17 +187,26 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                         ? (_currentQuizIndex + 1) / _quizzes.length.toDouble()
                         : 0.0,
                     backgroundColor: Colors.grey[200],
-                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        Theme.of(context).primaryColor),
                   ),
                   const SizedBox(height: 16),
                   // Add question number display
                   if (_quizzes.isNotEmpty)
                     Text(
-                      '${_quizzes.length} / ${_currentQuizIndex + 1}', // Show current question/total questions
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      Directionality.of(context) == TextDirection.rtl
+                          ? '${_quizzes.length} / ${_currentQuizIndex + 1}' // For RTL (Hebrew)
+                          : '${_currentQuizIndex + 1} / ${_quizzes.length}', // For LTR (English)
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                      textAlign: Directionality.of(context) == TextDirection.rtl
+                          ? TextAlign.left
+                          : TextAlign.right, // Adjust alignment based on locale
                     ),
                   const SizedBox(height: 16),
-                 // Quiz content
+                  // Quiz content
                   Expanded(
                     child: PageView.builder(
                       controller: _pageController,
@@ -216,12 +238,14 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
               child: Image.network(
                 quiz.img!,
                 fit: BoxFit.cover,
-                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                loadingBuilder: (BuildContext context, Widget child,
+                    ImageChunkEvent? loadingProgress) {
                   if (loadingProgress == null) return child;
                   return Center(
                     child: CircularProgressIndicator(
                       value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
                           : null,
                     ),
                   );
@@ -270,8 +294,10 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
   List<Widget> _buildAnswerButtons(Quiz quiz) {
     final answers = [quiz.answer1, quiz.answer2, quiz.answer3, quiz.answer4];
     return answers.map((answer) {
-      final isSelected = _selectedAnswer == answer; // Check if answer is selected
-      final isCorrect = quiz.correctAnswer == answer; // Check if answer is correct
+      final isSelected =
+          _selectedAnswer == answer; // Check if answer is selected
+      final isCorrect =
+          quiz.correctAnswer == answer; // Check if answer is correct
 
       Color getButtonColor() {
         if (!_answered) return Colors.white;
@@ -293,7 +319,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
             );
           },
           child: ElevatedButton(
-            onPressed: () => _handleAnswer(answer),  // Disable if answered
+            onPressed: () => _handleAnswer(answer), // Disable if answered
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.black87,
               backgroundColor: getButtonColor(),

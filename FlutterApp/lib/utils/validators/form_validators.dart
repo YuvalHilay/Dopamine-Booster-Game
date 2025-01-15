@@ -2,19 +2,20 @@
 // form_validators.dart
 class FormValidators {
   // Validate Name
-  static String? validateName(String? value, {required int maxLength}) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Name is required';
-    }
-    if (value.length > maxLength) {
-      return 'Name cannot exceed $maxLength characters';
-    }
-    final nameRegex = RegExp(r'^[A-Za-z\s]+$');
-    if (!nameRegex.hasMatch(value)) {
-      return "Name must only contain letters and spaces.";
-    }
-    return null;
+ static String? validateName(String? value, {required int maxLength}) {
+  if (value == null || value.trim().isEmpty) {
+    return 'Name is required';
   }
+  if (value.length > maxLength) {
+    return 'Name cannot exceed $maxLength characters';
+  }
+  // Updated regex to allow Hebrew, English letters, and spaces
+  final nameRegex = RegExp(r'^[\p{L}\s]+$', unicode: true);
+  if (!nameRegex.hasMatch(value)) {
+    return "Name must only contain letters and spaces.";
+  }
+  return null;
+}
 
   // Validate Email
   static String? validateEmail(String? value) {
@@ -48,24 +49,28 @@ class FormValidators {
     return null;
   }
 
-  // Validate Message
-  static String? validateMessage(String? value,
-      {int minLength = 10, int maxWords = 150}) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Please enter your message';
-    }
-
-    // Check minimum character length
-    if (value.trim().length < minLength) {
-      return 'Message must be at least $minLength characters long';
-    }
-
-    // Check maximum word count
-    final wordCount = value.trim().split(RegExp(r'\s+')).length;
-    if (wordCount > maxWords) {
-      return 'Message must not exceed $maxWords words';
-    }
-
-    return null;
+ // Validate Message
+static String? validateMessage(String? value, 
+    {int minLength = 10, int maxWords = 150}) {
+  if (value == null || value.trim().isEmpty) {
+    return 'Please enter your message';
   }
+
+  // Ensure accurate character count, considering trimmed Unicode strings
+  final trimmedValue = value.trim();
+
+  // Check minimum character length
+  if (trimmedValue.runes.length < minLength) {
+    return 'Message must be at least $minLength characters long';
+  }
+
+  // Check maximum word count, accounting for Unicode word boundaries
+  final wordCount = trimmedValue.split(RegExp(r'\s+')).length;
+  if (wordCount > maxWords) {
+    return 'Message must not exceed $maxWords words';
+  }
+
+  return null;
+}
+
 }

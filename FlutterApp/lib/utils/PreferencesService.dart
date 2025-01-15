@@ -48,4 +48,42 @@ class PreferencesService {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool('dark_mode') ?? false; // Default is Light Mode
   }
+
+  // Save the timer's end timestamp
+  Future<void> setTimerEndTimestamp(int timestamp) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('timer_end_timestamp', timestamp);
+  }
+
+  // Retrieve the timer's end timestamp
+  Future<int?> getTimerEndTimestamp() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('timer_end_timestamp');
+  }
+
+  // Clear the timer's end timestamp
+  Future<void> clearTimerEndTimestamp() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('timer_end_timestamp');
+  }
+
+   // Retrieve the APK installation status from SharedPreferences
+  Future<bool?> getAPKInstalledStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool? installed = prefs.getBool('apk_installed');
+    
+    // Debugging: log the status of 'apk_installed' to ensure it's set correctly
+    print("APK Installed Status: $installed");
+    
+    return installed;
+  }
+
+  // Set the APK installation status to SharedPreferences
+  Future<void> setAPKInstalledStatus(bool status) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('apk_installed', status);
+
+    // Debugging: log the status being saved
+    print("APK Installed Status Saved: $status");
+  }
 }

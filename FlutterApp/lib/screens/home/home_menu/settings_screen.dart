@@ -5,11 +5,15 @@ import 'package:google_fonts/google_fonts.dart';
 class SettingsScreen extends StatefulWidget {
   final Function(Locale) setLocale;
   final Function(bool) toggleTheme;
+  final Function(bool) toggleSound;
+  final Function(bool) toggleNotifications;
 
   const SettingsScreen({
     Key? key,
     required this.setLocale,
     required this.toggleTheme,
+    required this.toggleSound,
+    required this.toggleNotifications,
   }) : super(key: key);
 
   @override
@@ -35,6 +39,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _isDarkMode = value;
     });
     widget.toggleTheme(value);
+  }
+
+  void _handleSoundToggle(bool value) {
+    setState(() {
+      _isSoundEnabled = value;
+    });
+    widget.toggleSound(value);
+  }
+
+  void _handleNotificationsToggle(bool value) {
+    setState(() {
+      _isNotificationEnabled = value;
+    });
+    widget.toggleNotifications(value);
   }
 
   @override
@@ -91,14 +109,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: AppLocalizations.of(context)!.enableNotifications,
                 child: Switch(
                   value: _isNotificationEnabled,
-                  onChanged: (value) => setState(() => _isNotificationEnabled = value),
+                  onChanged: _handleNotificationsToggle,
                 ),
               ),
               _buildSettingCard(
                 title: AppLocalizations.of(context)!.soundEffects,
                 child: Switch(
                   value: _isSoundEnabled,
-                  onChanged: (value) => setState(() => _isSoundEnabled = value),
+                  onChanged: _handleSoundToggle,
                 ),
               ),
               _buildSettingCard(
