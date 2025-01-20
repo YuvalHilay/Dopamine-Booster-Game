@@ -41,7 +41,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
     super.initState();
     _loadCategories();  // Load categories when the screen is initialized
   }
-  
+
   // Dispose method to clean up controllers when the widget is removed from the widget tree.
   @override
   void dispose() {
@@ -92,9 +92,6 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
     }
 }
 
-  /// Submits a new quiz by validating the form, uploading an image (if selected), 
-  /// and saving the quiz data to the repository. Displays success or error messages 
-  /// to the user and resets the form on successful submission.
   /// Submits a new quiz by validating the form, uploading an image (if selected), 
   /// and saving the quiz data to the repository. Displays success or error messages 
   /// to the user and resets the form on successful submission.
