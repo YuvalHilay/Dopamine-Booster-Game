@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:Dopamine_Booster/components/my_textfield.dart';
 import 'package:Dopamine_Booster/components/popup_msg.dart';
+import 'package:Dopamine_Booster/utils/localizedNames.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -335,7 +336,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
           items: _categories
               .map((category) => DropdownMenuItem(
                     value: category,
-                    child: Text('category'),            
+                    child: Text(getLocalizedCategoryName(context,category)),            
                   ))
               .toList(),
           onChanged: (value) {
