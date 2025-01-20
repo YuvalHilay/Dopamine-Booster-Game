@@ -19,7 +19,7 @@ class _GamePageState extends State<GamePage> {
   final String packageName = "com.DopamineGame.DopamineGame";
   final PreferencesService _preferencesService = PreferencesService();
   bool isAPKInstalled = false; // Track installation status
-  static const int countdownDuration = 2 * 60 * 60  ; // 3-hour timer in seconds
+  static const int countdownDuration = 1 * 60 * 60  ; // 1-hour timer in seconds
   bool isButtonLocked = false;
   int countdown = 0;
   Timer? _countdownTimer;
@@ -95,6 +95,8 @@ class _GamePageState extends State<GamePage> {
         // Open and trigger APK installation
         final result = await OpenFile.open(file.path);
         if (result.type != ResultType.done) { 
+          // Delete the temporary file after installation
+          await file.delete();
           displayMessageToUser(AppLocalizations.of(context)!.errorInstallApk, context);
         }
 
@@ -103,9 +105,10 @@ class _GamePageState extends State<GamePage> {
           isAPKInstalled = true;
           isDownloading = false; // Download complete
         });
+        // Update Preferences Service status
         await _preferencesService.setAPKInstalledStatus(true);
       } else {
-        throw Exception("Failed to download thhe game APK");
+        throw Exception("Failed to download the game APK");
       }
     } catch (e) {
       setState(() {
@@ -125,7 +128,7 @@ class _GamePageState extends State<GamePage> {
       appStoreLink: 'itms-apps://itunes.apple.com/us/app/pulse-secure/id945832041',
       openStore: false,
     );
-
+    if (!mounted) return; // Ensure widget is still mounted before setting state
     // Lock the button and start the countdown
     setState(() {
       isButtonLocked = true;
@@ -137,7 +140,9 @@ class _GamePageState extends State<GamePage> {
     _startCountdown();
   } catch (e) {
     // Handle any errors
-    displayMessageToUser(AppLocalizations.of(context)!.failedGameStart,context);
+    if (mounted) {
+      displayMessageToUser(AppLocalizations.of(context)!.failedGameStart, context);
+    }
   }
 }
 

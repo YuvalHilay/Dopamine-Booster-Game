@@ -1,5 +1,6 @@
 import 'package:Dopamine_Booster/components/categories_bar.dart';
 import 'package:Dopamine_Booster/components/popup_msg.dart';
+import 'package:Dopamine_Booster/utils/localizedNames.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz_repository/quiz.repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -12,10 +13,19 @@ class AddCategoriesScreen extends StatefulWidget {
 }
 
 class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
-  final QuizRepository quizRepository = FirebaseQuizRepo(); // Initialize the quiz repository
+  final QuizRepository quizRepository = FirebaseQuizRepo();
   final TextEditingController _categoryNameController = TextEditingController();
   List<Category> categories = [];
   String _searchQuery = '';
+  String _selectedGrade = 'Third Grade'; // Default selected grade
+  
+  final List<Map<String, dynamic>> grades = [
+    {'name': 'Third Grade', 'icon': Icons.looks_3, 'color': Colors.purple},
+    {'name': 'Fourth Grade', 'icon': Icons.looks_4, 'color': Colors.green},
+    {'name': 'Fifth Grade', 'icon': Icons.looks_5, 'color': Colors.blue},
+    {'name': 'Sixth Grade', 'icon': Icons.looks_6, 'color': Colors.red},
+    {'name': 'Seventh Grade', 'icon': Icons.grade, 'color': Colors.orange},
+  ];
 
   @override
   void initState() {
@@ -23,96 +33,121 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
     _loadCategories();
   }
 
-  // This method loads all categories from the repository and updates the UI.
   Future<void> _loadCategories() async {
     try {
-      final loadedCategories = await quizRepository.getAllCategories(); // Load categories from the repository
+      final loadedCategories = await quizRepository.getAllCategories();
       if (mounted) {
         setState(() {
-          categories = loadedCategories; // Update the categories in the state
+          categories = loadedCategories;
         });
       }
     } catch (e) {
       if (mounted) {
-        displayMessageToUser('Failed to load categories!', context); // Display an error message if loading fails
+        displayMessageToUser('Failed to load categories!', context);
       }
     }
   }
 
-  // This method adds a new category after getting input from the user via a dialog.
   Future<void> _addCategory() async {
-    // Show an AlertDialog to get the category name from the user
-    final result = await showDialog<String>(
+    final result = await showDialog<Map<String, String>>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.addNewCat), // Title of the dialog
-          content: TextField(
-            controller: _categoryNameController, // Text controller to capture user input
-            decoration: InputDecoration(hintText: AppLocalizations.of(context)!.enterCat), // Hint for the text field
-          ),
-          actions: <Widget>[
-            // Cancel button to close the dialog without adding a category
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.cancel),
-              onPressed: () => Navigator.of(context).pop(), // Close the dialog
-              style: TextButton.styleFrom(foregroundColor: Colors.black),
-            ),
-            // Add button to confirm the input and return the category name
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.add),
-              onPressed: () => Navigator.of(context).pop(_categoryNameController.text), // Pop the dialog with the entered text
-              style: TextButton.styleFrom(foregroundColor: Colors.green),
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: Text(AppLocalizations.of(context)!.addNewCat),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: _categoryNameController,
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context)!.enterCat,
+                    ),
+                  ),
+                  SizedBox(height: 16),
+                  DropdownButton<String>(
+                    value: _selectedGrade,
+                    isExpanded: true,
+                    items: grades.map((grade) {
+                      return DropdownMenuItem<String>(
+                        value: grade['name'],
+                        child: Row(
+                          children: [
+                            Icon(grade['icon'], color: grade['color']),
+                            SizedBox(width: 8),
+                            Text(grade['name']),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedGrade = newValue!;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text(AppLocalizations.of(context)!.cancel),
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: TextButton.styleFrom(foregroundColor: Colors.black),
+                ),
+                TextButton(
+                  child: Text(AppLocalizations.of(context)!.add),
+                  onPressed: () => Navigator.of(context).pop({
+                    'name': _categoryNameController.text,
+                    'grade': _selectedGrade,
+                  }),
+                  style: TextButton.styleFrom(foregroundColor: Colors.green),
+                ),
+              ],
+            );
+          },
         );
       },
     );
 
-    // If the user has entered a non-empty category name, proceed to add the category
-    if (result != null && result.isNotEmpty) {
+    if (result != null && result['name']!.isNotEmpty) {
       try {
         final newCategory = Category(
-          categoryId: '', // Placeholder, as the ID will be generated by the repository
-          categoryName: result, // Set the entered name as the category name
-          quizCount: 0, // Set initial quiz count to 0
-          averageScore: 0, // Set initial average score to 0
-          quizzes: [], // Empty list of quizzes initially
+          categoryId: '',
+          categoryName: result['name']!,
+          grade: result['grade']!,
+          isLocked: false,
+          quizCount: 0,
+          averageScore: 0,
+          quizzes: [],
         );
-        // Add the new category to the repository
         await quizRepository.addCategory(newCategory);
-        // Reload categories to reflect the newly added category
         _loadCategories();
       } catch (e) {
-        // Display an error message if adding the category fails
         displayMessageToUser('Failed to add category!', context);
       }
     }
 
-    // Clear the text field after the operation (whether successful or not)
     _categoryNameController.clear();
   }
 
-  // This method deletes a given category after user confirmation.
   Future<void> _deleteCategory(Category category) async {
-    // Show a confirmation dialog asking the user if they really want to delete the category
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.deleteCategory), // Dialog title
-          content: Text(AppLocalizations.of(context)!.deleteCateMsg(category.categoryName)), // Message asking for confirmation with the category name
+          title: Text(AppLocalizations.of(context)!.deleteCategory),
+          content: Text(AppLocalizations.of(context)!
+              .deleteCateMsg(category.categoryName)),
           actions: <Widget>[
-            // Cancel button to close the dialog without deleting the category
             TextButton(
               child: Text(AppLocalizations.of(context)!.cancel),
-              onPressed: () => Navigator.of(context).pop(false), // Pop the dialog and return false (cancel)
+              onPressed: () => Navigator.of(context).pop(false),
               style: TextButton.styleFrom(foregroundColor: Colors.black),
             ),
-            // Delete button to confirm the deletion of the category
             TextButton(
               child: Text(AppLocalizations.of(context)!.delete),
-              onPressed: () => Navigator.of(context).pop(true), // Pop the dialog and return true (confirm delete)
+              onPressed: () => Navigator.of(context).pop(true),
               style: TextButton.styleFrom(foregroundColor: Colors.red),
             ),
           ],
@@ -120,25 +155,22 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
       },
     );
 
-    // If the user confirmed the deletion (confirmed == true), proceed to delete the category
     if (confirmed == true) {
       try {
-        // Delete the category from the repository using its categoryId
         await quizRepository.deleteCategory(category.categoryId);
-        // Reload categories to reflect the deletion
         _loadCategories();
       } catch (e) {
-        // Display an error message if the category deletion fails
         displayMessageToUser('Failed to delete category!', context);
       }
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final filteredCategories = categories
-        .where((category) => category.categoryName.toLowerCase().contains(_searchQuery.toLowerCase()))
+        .where((category) => category.categoryName
+            .toLowerCase()
+            .contains(_searchQuery.toLowerCase()))
         .toList();
 
     return Scaffold(
@@ -157,17 +189,45 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
             margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: ListTile(
               leading: CircleAvatar(
-                backgroundColor: Theme.of(context).primaryColor,
+                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
                 child: Text(
                   filteredCategories[index].categoryName[0].toUpperCase(),
-                  style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary),
                 ),
               ),
-              title: Text(filteredCategories[index].categoryName),
-              subtitle: Text('${filteredCategories[index].quizCount} quizzes'),
-              trailing: IconButton(
-                icon: const Icon(Icons.delete, color: Colors.red, size: 20),
-                onPressed: () => _deleteCategory(filteredCategories[index]),
+              title: Text(getLocalizedCategoryName(context, filteredCategories[index].categoryName)),
+              subtitle: Text(
+                  '${filteredCategories[index].quizCount} quizzes - ${filteredCategories[index].grade}'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+                    onPressed: () => _deleteCategory(filteredCategories[index]),
+                  ),
+                  // Lock/Unlock button
+                  IconButton(
+  icon: Icon(
+    filteredCategories[index].isLocked ? Icons.lock : Icons.lock_open,
+    color: filteredCategories[index].isLocked ? Colors.green : Colors.grey,
+    size: 20,
+  ),
+  onPressed: () async {
+    // Toggle the lock state in the UI
+    setState(() {
+      filteredCategories[index].isLocked = !filteredCategories[index].isLocked;
+    });
+
+    // Update the database
+    await quizRepository.updateCategoryLockState(
+      filteredCategories[index].categoryId,
+      filteredCategories[index].isLocked,
+    );
+  },
+),
+
+                ],
               ),
               onTap: () {
                 // TODO: Future Navigate to category detail or quiz list

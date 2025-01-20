@@ -20,12 +20,6 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
   final QuizRepository quizRepository = FirebaseQuizRepo(); // Initialize the quiz repository
   // Initially empty categories list
   List<String> _categories = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCategories();  // Load categories when the screen is initialized
-  }
   final _formKey = GlobalKey<FormState>();
   // List of controllers for the option fields (4 answers options in total).
   final List<TextEditingController> _optionControllers = List.generate(
@@ -35,14 +29,18 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
   final TextEditingController _correctAnswerController = TextEditingController();
   final TextEditingController _quizQuestionController = TextEditingController();
   final TextEditingController _quizDescriptionController = TextEditingController();
-
   String? _selectedCategory;
   File? _selectedImage;
   bool _isLoading = false;
-  
   // Instance of ImagePicker to pick images from the gallery.
   final ImagePicker _picker = ImagePicker();
   
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();  // Load categories when the screen is initialized
+  }
+
   // Dispose method to clean up controllers when the widget is removed from the widget tree.
   @override
   void dispose() {
@@ -55,25 +53,30 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
     super.dispose();
   }
 
+  // Loads the list of quiz categories that are open for changes (isLocked = false) from the repository.
+  // Ensures that only unlocked categories are fetched and displayed in the dropdown.
   Future<void> _loadCategories() async {
-  try {
-    // Fetch the categories asynchronously
-    final categories = await quizRepository.getAllCategories();
+    try {
+      // Fetch the categories asynchronously with isOpen true to recived only the open to change categories (isLocked=false)
+      final categories = await quizRepository.getAllCategories(isOpen: true);
 
-    // Check if the widget is still mounted before calling setState
-    if (mounted) {
-      setState(() {
-        _categories = categories.map((category) => category.categoryName).toList();
-      });
+      // Check if the widget is still mounted before calling setState
+      if (mounted) {
+        setState(() {
+          _categories = categories.map((category) => category.categoryName).toList();
+        });
+      }
+    } catch (e) {
+      if (mounted) { 
+        // Only display the message if the widget is still mounted
+        displayMessageToUser('Failed to load categories!', context);
+      }
     }
-  } catch (e) {
-    if (mounted) { 
-      // Only display the message if the widget is still mounted
-      displayMessageToUser('Failed to load categories!', context);
-    }
-  }
 }
 
+  /// Submits a new quiz by validating the form, uploading an image (if selected), 
+  /// and saving the quiz data to the repository. Displays success or error messages 
+  /// to the user and resets the form on successful submission.
   Future<void> _submitQuiz() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() => _isLoading = true);
@@ -320,7 +323,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
-            AppLocalizations.of(context)!.category,
+            AppLocalizations.of(context)!.category,  // Category label
             style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -328,11 +331,11 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
           ),
         ),
         DropdownButtonFormField<String>(
-          value: _selectedCategory,
+          value: _selectedCategory, // Selected category
           items: _categories
               .map((category) => DropdownMenuItem(
                     value: category,
-                    child: Text(category),
+                    child: Text('category'),            
                   ))
               .toList(),
           onChanged: (value) {
@@ -431,6 +434,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
     );
   }
 
+  // Method to build the submit button widget
   Widget _buildAddButton() {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),

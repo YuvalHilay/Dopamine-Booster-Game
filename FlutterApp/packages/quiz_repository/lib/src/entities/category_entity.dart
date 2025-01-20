@@ -3,6 +3,8 @@ import '../models/models.dart';
 class CategoryEntity {
   String categoryId;
   String categoryName;
+  String grade;
+  bool isLocked;
   int quizCount;
   final double averageScore; // Average score for the category
   List<Quiz> quizzes;
@@ -11,6 +13,8 @@ class CategoryEntity {
   CategoryEntity({
     required this.categoryId,
     required this.categoryName,
+    required this.grade,
+    required this.isLocked,
     required this.quizCount,
     required this.averageScore,
     List<Quiz>? quizzes, // Allow nullable list and default to empty

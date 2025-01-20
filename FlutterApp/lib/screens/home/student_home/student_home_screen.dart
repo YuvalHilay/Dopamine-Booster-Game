@@ -3,6 +3,7 @@ import 'package:Dopamine_Booster/components/my_drawer.dart';
 import 'package:Dopamine_Booster/screens/home/student_home/categories_screen.dart';
 import 'package:Dopamine_Booster/screens/home/home_menu/profile_screen.dart';
 import 'package:Dopamine_Booster/screens/home/student_home/game_page.dart';
+import 'package:Dopamine_Booster/screens/home/student_home/grade_selection_page.dart';
 import 'package:Dopamine_Booster/screens/home/student_home/home_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     super.initState();
     _pages = [
       HomeScreen(gender: widget.user.gender),
-      CategoriesScreen(userId: widget.user.userId, userName: '${widget.user.firstName} ${widget.user.lastName}'),
+      GradeSelectionScreen(userId: widget.user.userId, userName: '${widget.user.firstName} ${widget.user.lastName}'),
+      //CategoriesScreen(userId: widget.user.userId, userName: '${widget.user.firstName} ${widget.user.lastName}'),
       GamePage(),
       ProfileScreen(email: widget.user.email, userName: '${widget.user.firstName} ${widget.user.lastName}'),
     ];
