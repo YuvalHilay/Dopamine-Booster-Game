@@ -22,24 +22,24 @@ public class InGameManager : MonoBehaviour
     private GameObject popupMessageUI; // The popup message UI object
     private TextMeshProUGUI popupMessageText; // The TextMesh Pro UI component inside the popup
     private TextMeshProUGUI countdownText; // The countdown text to show the timer above the message
-    public float gameDuration = 240f; // משך זמן המשחק (5 דקות)
+    public float gameDuration = 240f; // משך זמן המשחק (240 sec)
     private float remainingTime; // Time left for the timer
     private bool gameEnded = false;
     // רשימות הודעות בעברית ובאנגלית
     private List<string> exerciseMessagesEnglish = new List<string>
     {
         "ready ?",
-        "Sport exercise:    Now run in place",
-        "Sport exercise:    Now jump in place",
-        "Breathing exercise:     Inhale for four, hold for four, exhale for four, and hold for four"
+        "Sport exercise:       Now run in place",
+        "Sport exercise:       Now jump in place",
+        "Breathing exercise:       Inhale for four, hold for four, exhale for four, and hold for four"
     };
 
     private List<string> exerciseMessagesHebrew = new List<string>
     {
         "? ןכומ",
-        "טרופס לוגרת    םוקמב ץור וישכע",
-        "טרופס לוגרת    םוקמב ץופק וישכע",
-        "היצטידמ תוליעפ  תוינש עברא םושנ תוינש עברא ףושנו    "
+        "טרופס לוגרת          םוקמב ץור וישכע",
+        "טרופס לוגרת          םוקמב ץופק וישכע",
+        "היצטידמ תוליעפ         תוינש עברא םושנ         תוינש עברא ףושנו",
     };
 
     // רשימה של ההודעות שתוצג לפי השפה
@@ -50,9 +50,9 @@ public class InGameManager : MonoBehaviour
 
     private void Start()
     {
-        remainingTime = gameDuration; // אתחול הזמן הנותר
+        remainingTime = gameDuration; // rebuild the remain time
         CreatePopupUI();
-        gameTimerCoroutine = StartCoroutine(GameTimer()); // הפעלת טיימר המשחק
+        gameTimerCoroutine = StartCoroutine(GameTimer()); // start the timer of the game
         StartCoroutine(DisplayExerciseMessages());
     }
     private IEnumerator GameTimer()
@@ -91,7 +91,7 @@ public class InGameManager : MonoBehaviour
         // Create the UI Panel (popupMessageUI)
         popupMessageUI = new GameObject("PopupMessageUI");
         RectTransform rectTransform = popupMessageUI.AddComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(400, 100); // Adjust size
+        rectTransform.sizeDelta = new Vector2(600, 100); // Adjust size
         popupMessageUI.AddComponent<CanvasRenderer>();
 
         // Add a Canvas component if needed (optional, depends on your scene setup)
@@ -108,10 +108,10 @@ public class InGameManager : MonoBehaviour
 
         popupMessageText = messageTextObj.AddComponent<TextMeshProUGUI>();  // Use TextMeshProUGUI instead of TMP_Text
         popupMessageText.font = popupFont;  // Assign the font through the Inspector
-        popupMessageText.fontSize = 44;
+        popupMessageText.fontSize = 90;
         popupMessageText.alignment = TextAlignmentOptions.Center;  // Align text to the center
         popupMessageText.color = Color.black; // Change text color to black
-        popupMessageText.rectTransform.sizeDelta = new Vector2(400, 100); // Match size with panel
+        popupMessageText.rectTransform.sizeDelta = new Vector2(950, 100); // Match size with panel
         popupMessageText.rectTransform.anchoredPosition = Vector2.zero; // Center the text
 
         // Create the countdown text UI component
@@ -120,11 +120,11 @@ public class InGameManager : MonoBehaviour
 
         countdownText = countdownTextObj.AddComponent<TextMeshProUGUI>();  // Use TextMeshProUGUI instead of TMP_Text
         countdownText.font = popupFont;  // Assign the font through the Inspector
-        countdownText.fontSize = 36;
+        countdownText.fontSize = 90;
         countdownText.alignment = TextAlignmentOptions.Center;  // Align text to the center
         countdownText.color = Color.black; // Change text color to black
-        countdownText.rectTransform.sizeDelta = new Vector2(400, 100); // Match size with panel
-        countdownText.rectTransform.anchoredPosition = new Vector2(0, 150); // Position above the message
+        countdownText.rectTransform.sizeDelta = new Vector2(700, 100); // Match size with panel
+        countdownText.rectTransform.anchoredPosition = new Vector2(0, 250); // Position above the message
 
         // Initially hide the popup
         popupMessageUI.SetActive(false);
@@ -406,8 +406,22 @@ public class InGameManager : MonoBehaviour
 
         // Activate the level complete menu
         levelCompleteMenu.SetActive(true);
+        // Start a coroutine to close the game after 5 seconds
+        StartCoroutine(ExitAfterDelay(5f)); // 5 seconds delay
     }
+    // Coroutine that exits the game after a specified delay
+    private IEnumerator ExitAfterDelay(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay); // Wait for the specified time, using WaitForSecondsRealtime to ignore time scale
 
+        Debug.Log("5 seconds have passed! Exiting the application.");
+        Application.Quit(); // This will close the application
+
+        // If you are running in the editor, use this to simulate quitting
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
     private void EndGame()
     {
         // Mark the game as ended

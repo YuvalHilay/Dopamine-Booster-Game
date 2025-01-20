@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
+    private static MenuManager instance;
     // References to UI elements
     public Transform levelContainer; // Container for level buttons
     public RectTransform menuContainer; // Main menu container
@@ -127,38 +128,43 @@ public class MenuManager : MonoBehaviour
     // Change the menu view with a sliding animation
     private void ChangeMenu(MenuType menuType)
     {
-        Vector3 newPos;
+        Vector2 newPos;
         if (menuType == MenuType.Map1Menu)
         {
-            newPos = new Vector3(-screenWidth, 0f, 0f); // Off-screen position for Map1Menu
+            newPos = new Vector2(-screenWidth, 0f); // Off-screen position for Map1Menu
         }
         else
         {
-            newPos = Vector3.zero; // Default position for MainMenu
+            newPos = Vector2.zero; // Default position for MainMenu
         }
 
         StopAllCoroutines();
         StartCoroutine(ChangeMenuAnimation(newPos)); // Start menu transition animation
     }
 
-    // Coroutine for the menu transition animation
-    private IEnumerator ChangeMenuAnimation(Vector3 newPos)
+    private IEnumerator ChangeMenuAnimation(Vector2 newPos)
     {
-        if (menuContainer == null) yield break; // Early exit if the menuContainer is null
+        if (menuContainer == null) yield break;
 
         float elapsed = 0f;
-        Vector3 oldPos = menuContainer.anchoredPosition3D;
+        Vector2 oldPos = menuContainer.anchoredPosition;
+
+        // שינוי המיקום כך שיזוז שמאלה (ערך X שלילי)
+        newPos = new Vector2(-1286, 0);
 
         while (elapsed <= transitionTime)
         {
-            if (menuContainer == null) yield break; // Exit if menuContainer is destroyed during the coroutine
+            if (menuContainer == null) yield break;
 
             elapsed += Time.deltaTime;
-            Vector3 currentPos = Vector3.Lerp(oldPos, newPos, elapsed / transitionTime);
-            menuContainer.anchoredPosition3D = currentPos;
+            Vector2 currentPos = Vector2.Lerp(oldPos, newPos, elapsed / transitionTime);
+            menuContainer.anchoredPosition = currentPos;
             yield return null;
         }
+
+        menuContainer.anchoredPosition = newPos;
     }
+
 
     // Handle level selection
     private void OnLevelSelect(int idx)
@@ -175,8 +181,28 @@ public class MenuManager : MonoBehaviour
     {
         Debug.Log("Play Button Clicked");
         ChangeMenu(MenuType.Map1Menu); // Switch to map menu
-    }
+                                       // Start the timer coroutine
 
+        // Make sure the timer runs in the background even when switching scenes
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject); // Keep this object between scene changes
+            StartCoroutine(StartTimer());
+        }
+    }
+    // Coroutine that handles the timer and exits the app after 400 seconds
+    private IEnumerator StartTimer()
+    {
+        yield return new WaitForSeconds(400); // Wait for 400 seconds
+        Debug.Log("400 seconds have passed! Exiting the application.");
+        Application.Quit(); // This will close the application
+
+        // If you are running in the editor, use this to simulate quitting
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+    }
     // Go back to the main menu
     public void OnMainMenuButtonClicked()
     {
