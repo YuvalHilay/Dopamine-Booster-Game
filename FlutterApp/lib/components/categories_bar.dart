@@ -73,10 +73,10 @@ class _CategoriesBarState extends State<CategoriesBar> {
                 hintText: AppLocalizations.of(context)!.searchCategories, 
                 border: InputBorder.none, // Remove border for a clean look
                 hintStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7), 
+                  color: Theme.of(context).colorScheme.inversePrimary.withOpacity(0.8), 
                 ),
               ),
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary), 
+              style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary), 
               onChanged: _updateSearchQuery, // Callback when the text changes
             )
           // If not in search mode, show the title with an icon

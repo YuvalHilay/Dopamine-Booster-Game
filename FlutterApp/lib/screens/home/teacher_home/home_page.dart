@@ -1,3 +1,4 @@
+import 'package:Dopamine_Booster/screens/home/teacher_home/teacher_stats_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +8,11 @@ import 'package:user_repository/user_repository.dart';
 class HomeScreen extends StatefulWidget {
   final VoidCallback onNavigateToAddQuiz;
   final VoidCallback onNavigateToAddCategory;
-  const HomeScreen({Key? key, required this.onNavigateToAddQuiz, required this.onNavigateToAddCategory}) : super(key: key);
+  const HomeScreen(
+      {Key? key,
+      required this.onNavigateToAddQuiz,
+      required this.onNavigateToAddCategory})
+      : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -118,7 +123,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 Icons.bar_chart,
                 AppLocalizations.of(context)!.viewStats,
                 () {
-                  // TODO: Implement stats view
+                  // Navigate to students stats report page to track in quick look their progress.
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TeacherStatsScreen()),
+                  );
                 },
                 Color(0xFFFFD93D),
               ),
@@ -190,15 +200,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 AppLocalizations.of(context)!.categories, Color(0xFF6A11CB)),
             _buildStatCard(context, quizCount,
                 AppLocalizations.of(context)!.quizzes, Color(0xFF2575FC)),
-            _buildStatCard(context, studentsCount, 
-            AppLocalizations.of(context)!.activeStudents, Color(0xFFFFA500)),
+            _buildStatCard(
+                context,
+                studentsCount,
+                AppLocalizations.of(context)!.activeStudents,
+                Color(0xFFFFA500)),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildStatCard(BuildContext context, String value, String label, Color color) {
+  Widget _buildStatCard(
+      BuildContext context, String value, String label, Color color) {
     return Card(
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -347,5 +361,4 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
     return subtitles[index % subtitles.length];
   }
-
 }

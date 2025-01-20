@@ -111,7 +111,7 @@
     "@addNewCat": {
         "description": "Add New Category"
     },
-    "enterCat" : "Enter category name", 
+    "enterCat" : "Enter Category Name", 
     "@enterCat": {
         "description": "Enter category name"
     },
@@ -319,9 +319,9 @@
     "@activeStudents": {
         "description": "Active Students"
     },
-    "viewStats" : "View Stats", 
+    "viewStats" : "Students Stats", 
     "@viewStats": {
-        "description": "View Stats"
+        "description": "Students Stats"
     },
     "searchCategories" : "Search Categories", 
     "@searchCategories": {
@@ -507,6 +507,14 @@
     "@startGame": {
         "description": "Start Game"
     },
+    "playedGrade" : "Played Grades:", 
+    "@playedGrade": {
+        "description": "Played Grades:"
+    },
+    "notPlayedGrade" : "Not Played Grades:", 
+    "@notPlayedGrade": {
+        "description": "Not Played Grades:"
+    },
     "gameAvailableIn": "It's learning time,\nGame will be available again in {countdown0}:{countdown1}:{countdown2}",
     "@gameAvailableIn": {
         "description": "Game availability message with countdown"
@@ -535,7 +543,7 @@
     "@welcomeUser": {
         "description": "Welcome {user},"
     },
-    "leaderboardMsg" : "See how you compare with others!", 
+    "leaderboardMsg" : "See how you compare with others! These are the Top 3:", 
     "@leaderboardMsg": {
         "description": "See how you compare with others!"
     },
@@ -546,6 +554,34 @@
     "adhdDescription": "Attention-Deficit/Hyperactivity Disorder (ADHD) is a neurodevelopmental disorder characterized by persistent patterns of inattention, hyperactivity, and impulsivity.",
     "@adhdDescription": {
         "description": "Description text explaining ADHD in English."
+    },
+    "chooseGrade" : "Choose Your Grade", 
+    "@chooseGrade": {
+        "description": "Choose Your Grade"
+    },
+    "selectGrade" : "Select Grade", 
+    "@selectGrade": {
+        "description": "Select Grade"
+    },
+    "thirdGrade" : "Third  Grade", 
+    "@thirdGrade": {
+        "description": "Third  Grade"
+    },
+    "fourthGrade" : "Fourth Grade", 
+    "@fourthGrade": {
+        "description": "Fourth Grade"
+    },
+    "fifthGrade" : "Fifth  Grade", 
+    "@fifthGrade": {
+        "description": "Fifth  Grade"
+    }, 
+    "sixthGrade" : "Sixth Grade", 
+    "@sixthGrade": {
+        "description": "Sixth Grade"
+    },
+    "seventhGrade" : "Seventh Grade", 
+    "@seventhGrade": {
+        "description": "Seventh Grade"
     },
     "termsCheckBox" : "I agree to the terms and conditions",
     "@termsCheckBox": {

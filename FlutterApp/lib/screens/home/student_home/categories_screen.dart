@@ -1,5 +1,6 @@
 import 'package:Dopamine_Booster/components/categories_bar.dart';
 import 'package:Dopamine_Booster/screens/home/student_home/quiz_page.dart';
+import 'package:Dopamine_Booster/utils/localizedNames.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:quiz_repository/quiz.repository.dart';
@@ -8,8 +9,9 @@ import 'package:quiz_repository/quiz.repository.dart';
 class CategoriesScreen extends StatefulWidget {
   final String userId; // User's unique identifier.
   final String userName; // User's name.
+  final String grade; // Selected grade.
 
-  CategoriesScreen({Key? key, required this.userId, required this.userName})
+  CategoriesScreen({Key? key, required this.userId, required this.userName, required this.grade})
       : super(key: key);
 
   @override
@@ -40,12 +42,24 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   // Fetch all quiz categories from the repository.
-  Future<List<Category>> fetchCategories() async {
+  Future<List<Category>> fetchCategories(grade) async {
     try {
-      return await _quizRepository.getAllCategories();
+      return await _quizRepository.getCategoriesByGrade(grade);
     } catch (e) {
       return []; // Return an empty list if there's an error.
     }
+  }
+
+  // Reverse the mapping to get the original grade name based on the localized name.
+  String getOriginalGradeName(String gradeName, AppLocalizations localizations) {
+    // Match the passed localized grade name to its English equivalent
+    if (gradeName == localizations.thirdGrade) return 'Third Grade';
+    if (gradeName == localizations.fourthGrade) return 'Fourth Grade';
+    if (gradeName == localizations.fifthGrade) return 'Fifth Grade';
+    if (gradeName == localizations.sixthGrade) return 'Sixth Grade';
+    if (gradeName == localizations.seventhGrade) return 'Seventh Grade';
+
+    return gradeName; // Default to the input name if no match is found
   }
 
   @override
@@ -62,8 +76,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         child: FutureBuilder<List<dynamic>>(
           // Combine fetching categories and grades in one Future.
           future: Future.wait([
-            fetchCategories(),
-            _quizRepository.fetchUserGrades(widget.userId),
+            fetchCategories(getOriginalGradeName(widget.grade, AppLocalizations.of(context)!)), // fetch categories of the selected grade
+            _quizRepository.fetchUserGrades(widget.userId), // fetch the user grades.
           ]),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -79,6 +93,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
             // Extract categories from snapshot data.
             final categories = snapshot.data![0] as List<Category>;
+            
             // Filter categories based on the user's search query.
             final filteredCategories = categories
                 .where((category) =>
@@ -114,6 +129,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                           categoryId: '',
                           categoryName: '',
                           isComplete: false,
+                          isPlayed: false,
                           userId: '',
                           score: '0/0',
                           userName: widget.userName),
@@ -166,27 +182,8 @@ class CategoryTile extends StatelessWidget {
     required this.onTileTapped,
   }) : super(key: key);
 
-  // Localize category names based on the app's language settings.
-  String getLocalizedCategoryName(BuildContext context, String categoryName) {
-    switch (categoryName) {
-      case 'Sports':
-        return AppLocalizations.of(context)!.sport;
-      case 'Physics':
-        return AppLocalizations.of(context)!.physics;
-      case 'Science':
-        return AppLocalizations.of(context)!.science;
-      case 'History':
-        return AppLocalizations.of(context)!.history;
-      case 'Math':
-        return AppLocalizations.of(context)!.math;
-      case 'Geography':
-        return AppLocalizations.of(context)!.geography;
-      case 'English':
-        return AppLocalizations.of(context)!.english;
-      default:
-        return categoryName; // Default to the original name if no localization is found.
-    }
-  }
+
+
 
   @override
   Widget build(BuildContext context) {

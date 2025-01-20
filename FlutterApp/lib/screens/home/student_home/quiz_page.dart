@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:Dopamine_Booster/components/popup_msg.dart';
+import 'package:Dopamine_Booster/utils/PreferencesService.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz_repository/quiz.repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -27,9 +28,13 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
       FirebaseQuizRepo(); // Initialize the quiz repository
   late PageController _pageController;
   late AnimationController _animationController;
-  late Animation<double> _animation;
-
+  late final Animation<double> _animation = CurvedAnimation(
+    parent: _animationController,
+    curve: Curves.easeInOut,
+  );
+  final PreferencesService _preferencesService = PreferencesService();
   int _currentQuizIndex = 0;
+  int? cachedTimerEndTimestamp; // Cached value for synchronous access
   int _score = 0;
   bool _answered = false;
   String? _selectedAnswer;
@@ -44,11 +49,9 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _animation =
-        CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
-
     _loadQuizzes(); // Load quizzes for the selected category
   }
+
 
   // Fetches quizzes for the selected category
   Future<void> _loadQuizzes() async {
@@ -107,22 +110,42 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
     });
   }
 
-  // Checks if the user has completed the quiz
-  bool isQuizComplete(int score, int totalQuizzes) {
+  // Checks if the user has completed the quiz with perfect score
+  bool isQuizCompleted(int score, int totalQuizzes) {
     return score == totalQuizzes;
   }
 
+  Future<bool> isPlayerPlayed() async {
+    cachedTimerEndTimestamp = await _preferencesService.getTimerEndTimestamp();
+    if (cachedTimerEndTimestamp == null) {
+      // If no timestamp is stored, assume the timer is done
+      return false;
+    }
+
+    final int currentTime = DateTime.now().millisecondsSinceEpoch;
+    final int remainingTime = cachedTimerEndTimestamp! - currentTime;
+    print("Remaining Time: $remainingTime ms");
+    // Timer is done if the remaining time is less than or equal to 0
+    return remainingTime > 0;
+  }
+
   // Displays the results dialog after completing the quiz
-  void _showResults(String categoryId, String categoryName, String userId) {
-    final bool isComplete = isQuizComplete(_score, _quizzes.length);
+  Future<void> _showResults(String categoryId, String categoryName, String userId) async {
+    final bool isComplete = isQuizCompleted(_score, _quizzes.length);
+     final bool isPlayed = await isPlayerPlayed(); // Await the result here
+    print(isPlayed);
     showDialog(
       context: context,
       barrierDismissible: false, // Prevent closing by tapping outside
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.quizComplete),
-          content: Text(
-              AppLocalizations.of(context)!.yourScore(_score, _quizzes.length)),
+          content: Text(Directionality.of(context) == TextDirection.rtl
+                  ? AppLocalizations.of(context)!
+                      .yourScore(_score, _quizzes.length) // For RTL (Hebrew)
+                  : AppLocalizations.of(context)!
+                      .yourScore(_quizzes.length, _score) // For RTL (English)
+              ),
           actions: <Widget>[
             TextButton(
               child: Text(AppLocalizations.of(context)!.tryAgain),
@@ -150,6 +173,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
                   categoryName,
                   widget.userName,
                   isComplete,
+                  isPlayed,
                   userId,
                   '$_score/${_quizzes.length}', // Save as percentage or normalized score
                 );
@@ -281,7 +305,7 @@ class _QuizScreenState extends State<QuizScreen> with TickerProviderStateMixin {
           const SizedBox(height: 8),
           // add the author of the quiz
           Text(
-            AppLocalizations.of(context)!.quizDescRes(quiz.author),
+            AppLocalizations.of(context)!.authorBy(quiz.author),
             style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.center,
           ),
