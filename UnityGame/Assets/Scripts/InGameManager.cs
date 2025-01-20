@@ -406,8 +406,6 @@ public class InGameManager : MonoBehaviour
 
         // Activate the level complete menu
         levelCompleteMenu.SetActive(true);
-        // Start a coroutine to close the game after 5 seconds
-        StartCoroutine(ExitAfterDelay(5f)); // 5 seconds delay
     }
     // Coroutine that exits the game after a specified delay
     private IEnumerator ExitAfterDelay(float delay)
@@ -434,3 +432,4 @@ public class InGameManager : MonoBehaviour
         OpenLevelCompleteMenu();
     }
 }
+
