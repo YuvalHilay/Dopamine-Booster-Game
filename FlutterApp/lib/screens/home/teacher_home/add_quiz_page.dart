@@ -41,7 +41,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
     super.initState();
     _loadCategories();  // Load categories when the screen is initialized
   }
-
+  
   // Dispose method to clean up controllers when the widget is removed from the widget tree.
   @override
   void dispose() {
@@ -56,7 +56,12 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
 
   // Loads the list of quiz categories that are open for changes (isLocked = false) from the repository.
   // Ensures that only unlocked categories are fetched and displayed in the dropdown.
+  // Loads the list of quiz categories that are open for changes (isLocked = false) from the repository.
+  // Ensures that only unlocked categories are fetched and displayed in the dropdown.
   Future<void> _loadCategories() async {
+    try {
+      // Fetch the categories asynchronously with isOpen true to recived only the open to change categories (isLocked=false)
+      final categories = await quizRepository.getAllCategories(isOpen: true);
     try {
       // Fetch the categories asynchronously with isOpen true to recived only the open to change categories (isLocked=false)
       final categories = await quizRepository.getAllCategories(isOpen: true);
@@ -73,8 +78,23 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
         displayMessageToUser('Failed to load categories!', context);
       }
     }
+      // Check if the widget is still mounted before calling setState
+      if (mounted) {
+        setState(() {
+          _categories = categories.map((category) => category.categoryName).toList();
+        });
+      }
+    } catch (e) {
+      if (mounted) { 
+        // Only display the message if the widget is still mounted
+        displayMessageToUser('Failed to load categories!', context);
+      }
+    }
 }
 
+  /// Submits a new quiz by validating the form, uploading an image (if selected), 
+  /// and saving the quiz data to the repository. Displays success or error messages 
+  /// to the user and resets the form on successful submission.
   /// Submits a new quiz by validating the form, uploading an image (if selected), 
   /// and saving the quiz data to the repository. Displays success or error messages 
   /// to the user and resets the form on successful submission.
@@ -435,6 +455,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
     );
   }
 
+  // Method to build the submit button widget
   // Method to build the submit button widget
   Widget _buildAddButton() {
     return AnimatedContainer(
