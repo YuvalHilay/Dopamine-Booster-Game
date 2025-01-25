@@ -144,8 +144,6 @@ class FirebaseUserRepo implements UserRepository {
   required String currentPassword,
   required String newPassword,
 }) async {
-  print("Changing password...");
-  print("Current password: $currentPassword");
   try {
     // Get the currently logged-in user
     User? user = _firebaseAuth.currentUser;
@@ -174,7 +172,6 @@ class FirebaseUserRepo implements UserRepository {
     // sign the user out and ask them to log in again
     await _firebaseAuth.signOut();
 
-    print("Password changed successfully. Please log in again.");
   } on FirebaseAuthException catch (e) {
     // Handle specific FirebaseAuth errors
     if (e.code == 'wrong-password') {

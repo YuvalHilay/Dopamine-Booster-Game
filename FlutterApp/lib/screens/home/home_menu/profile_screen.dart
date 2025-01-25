@@ -492,7 +492,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                               ),
-                              onPressed: () async {},
+                              onPressed: () async {
+                                try {
+                                  await _userRepository.changePassword(
+                                    currentPassword: currentPasswordController.text,
+                                    newPassword: newPasswordController.text,
+                                  );
+                                } catch (e) {
+                                  throw Exception("Failed to change password: $e");
+                                }
+                                Navigator.of(context).pop();
+                              },
                             ),
                           ),
                         ],
