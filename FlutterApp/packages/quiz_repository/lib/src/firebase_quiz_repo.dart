@@ -70,26 +70,37 @@ class FirebaseQuizRepo implements QuizRepository {
   // Deletes a quiz and removes it from its associated category
   Future<void> deleteQuiz(String quizId) async {
     try {
-      // Get the quiz to find its category
+      // Fetch the quiz document to retrieve its associated category ID
       final quizDoc = await _quizzesCollection.doc(quizId).get();
-      if (quizDoc.exists) {
-        final data = quizDoc.data() as Map<String, dynamic>;
-        final categoryId = data['categoryId'];
-
-        // Check if the category document exists
-        final categoryDoc = await _categoriesCollection.doc(categoryId).get();
-        if (categoryDoc.exists) {
-          // Remove quiz from category's quizzes array
-          await _categoriesCollection.doc(categoryId).update({
-            'quizIds': FieldValue.arrayRemove([quizId])
-          });
-        } else {
-          log('Category $categoryId not found. Skipping array update.');
-        }
-
-        // Delete the quiz document
-        await _quizzesCollection.doc(quizId).delete();
+      if (!quizDoc.exists) {
+        throw Exception('Quiz with ID $quizId not found.');
       }
+
+      final data = quizDoc.data() as Map<String, dynamic>;
+      final categoryId = data['categoryId'];
+
+      // Fetch the associated category document
+      final categoryDoc = await _categoriesCollection.doc(categoryId).get();
+      if (!categoryDoc.exists) {
+        throw Exception('Category with ID $categoryId not found.');
+      }
+
+      // Start a Firestore batch for atomic operations
+      final batch = FirebaseFirestore.instance.batch();
+
+      // Remove the quizId from the category's quizzes array
+      batch.update(_categoriesCollection.doc(categoryId), {
+        'quizIds': FieldValue.arrayRemove([quizId]),
+        'quizCount': FieldValue.increment(-1), // Decrease the quiz count
+      });
+
+      // Delete the quiz document
+      batch.delete(_quizzesCollection.doc(quizId));
+
+      // Commit the batch
+      await batch.commit();
+
+      log('Quiz $quizId deleted successfully.');
     } catch (e) {
       log('Error deleting quiz: ${e.toString()}');
       rethrow;
@@ -233,13 +244,11 @@ class FirebaseQuizRepo implements QuizRepository {
 
         return Category(
           categoryId: categoryId,
-          categoryName:
-              data['categoryName'] ?? '', // Default to empty string if null
+          categoryName:data['categoryName'] ?? '', // Default to empty string if null
           grade: data['grade'],
           isLocked: data['isLocked'] ?? false, // Default to false if null
           quizCount: quizCount,
-          averageScore:
-              (data['averageScore'] ?? 0).toDouble(), // Ensure it's a double
+          averageScore: (data['averageScore'] ?? 0).toDouble(), // Ensure it's a double
           quizzes: quizzes,
         );
       }).toList());
@@ -262,6 +271,8 @@ class FirebaseQuizRepo implements QuizRepository {
         'categoryId': generatedId, // Store the generated ID
         'categoryName': category.categoryName,
         'grade': category.grade,
+        'isLocked': category.isLocked, // Default to false if null
+        'quizCount': category.quizCount, // Default to 0 if null
         'quizzes': [], // Initialize empty array of quiz IDs
         'createdAt': FieldValue.serverTimestamp(),
       });
@@ -543,25 +554,46 @@ class FirebaseQuizRepo implements QuizRepository {
 }
 
   @override
-  // Deletes a category and all associated quizzes
+  // Deletes a category, all associated quizzes, and related grades
   Future<void> deleteCategory(String categoryId) async {
     try {
-      // First, delete all quizzes in this category
-      final quizzes = await getQuizzesByCategory(categoryId);
-      for (final quiz in quizzes) {
-        await deleteQuiz(quiz.quizId);
+      // Fetch the category document
+      final categoryDoc = await _categoriesCollection.doc(categoryId).get();
+
+      if (!categoryDoc.exists) {
+        throw Exception('Category with ID $categoryId not found.');
       }
 
-      // Then delete the category
-      final categoryDoc = await _categoriesCollection.doc(categoryId).get();
-      if (categoryDoc.exists) {
-        await _categoriesCollection.doc(categoryId).delete();
-      } else {
-        log('Category $categoryId not found. Skipping deletion.');
+      // Get the category data
+      final categoryData = categoryDoc.data() as Map<String, dynamic>;
+      final List<dynamic> quizIds = categoryData['quizzes'] ?? [];
+
+      // Start a Firestore batch for atomic operations
+      final batch = FirebaseFirestore.instance.batch();
+
+      // Delete all quizzes associated with the category
+      for (final quizId in quizIds) {
+        batch.delete(_quizzesCollection.doc(quizId));
       }
+
+      // Fetch and delete all grades associated with the category
+      final gradesQuery = await _gradesCollection.where('categoryId', isEqualTo: categoryId).get();
+      for (final gradeDoc in gradesQuery.docs) {
+        batch.delete(gradeDoc.reference);
+      }
+
+      // Delete the category document
+      batch.delete(_categoriesCollection.doc(categoryId));
+
+      // Commit the batch
+      await batch.commit();
+
+      log('Category $categoryId, associated quizzes, and grades deleted successfully.');
     } catch (e) {
       log('Error deleting category: ${e.toString()}');
       rethrow;
     }
   }
+
+
 }

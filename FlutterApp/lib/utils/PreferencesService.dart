@@ -1,6 +1,23 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesService {
+  // Save email to SharedPreferences
+Future<void> saveEmail(String email) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('saved_email', email);
+}
+
+// Retrieve the saved email
+Future<String?> getSavedEmail() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString('saved_email');
+}
+
+// Remove the saved email
+Future<void> removeSavedEmail() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('saved_email');
+}
   // Save whether sound is enabled
   Future<void> setSoundEnabled(bool isEnabled) async {
     final prefs = await SharedPreferences.getInstance();

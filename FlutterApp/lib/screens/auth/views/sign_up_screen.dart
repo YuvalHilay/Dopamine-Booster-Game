@@ -1,7 +1,9 @@
 import 'package:Dopamine_Booster/components/popup_msg.dart';
 import 'package:Dopamine_Booster/screens/auth/blocs/sign_up_bloc/bloc/sign_up_bloc.dart';
 import 'package:Dopamine_Booster/utils/validators/form_validators.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:user_repository/user_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -26,6 +28,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // User attributes
   String gender = 'M'; // Default value for gender
   String userType = 'Student'; // Default value for userType
+  int selectedUserRoleIndex = 0; // Default index for "Student"
   // Form states
   final _formKey = GlobalKey<FormState>();
   int currentStep = 0;
@@ -216,7 +219,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 isChecked = value ?? false;
               });
             },
-            activeColor: Colors.black,
+            activeColor: Theme.of(context).colorScheme.inversePrimary,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           ),
@@ -230,7 +233,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: RichText(
                 text: TextSpan(
                   text: AppLocalizations.of(context)!.agreeTo,
-                  style: TextStyle(color: Colors.black, fontSize: 14),
+                  style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary, fontSize: 14),
                   children: [
                     TextSpan(
                       text: AppLocalizations.of(context)!.termsAndC,
@@ -239,9 +242,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         fontWeight: FontWeight.bold,
                         decoration: TextDecoration.underline,
                       ),
-                      //recognizer: TapGestureRecognizer()..onTap = () {
-                      // Navigate to terms and conditions
-                      // },
+                      recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    showTermsAndConditions(context);
+                  },
                     ),
                   ],
                 ),
@@ -305,6 +309,153 @@ class _SignUpScreenState extends State<SignUpScreen> {
     ]);
   }
 
+  void showTermsAndConditions(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 10.0,
+                  offset: const Offset(0.0, 10.0),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(AppLocalizations.of(context)!.termsTitle,
+                  style: GoogleFonts.poppins(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
+                ),
+                SizedBox(height: 15),
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildTermsSection(context,
+                          title: AppLocalizations.of(context)!.termsTitle1,
+                          content: AppLocalizations.of(context)!.termsContent1,
+                        ),
+                        _buildTermsSection(context,
+                          title: AppLocalizations.of(context)!.termsTitle2,
+                          content: AppLocalizations.of(context)!.termsContent2,
+                        ),
+                        _buildTermsSection(context,
+                          title: AppLocalizations.of(context)!.termsTitle3,
+                          content: AppLocalizations.of(context)!.termsContent3,
+                        ),
+                        _buildTermsSection(context,
+                          title: AppLocalizations.of(context)!.termsTitle4,
+                          content: AppLocalizations.of(context)!.termsContent4,
+                        ),
+                        _buildTermsSection(context,
+                          title: AppLocalizations.of(context)!.termsTitle5,
+                          content: AppLocalizations.of(context)!.termsContent5,
+                        ),
+                        SizedBox(height: 10),
+                        Text(AppLocalizations.of(context)!.termsLastMsg,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            fontStyle: FontStyle.italic,
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    TextButton(
+                      style: TextButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.inversePrimary),
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(AppLocalizations.of(context)!.decline,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.red,
+                          
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          isChecked = !isChecked;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      child: Text(AppLocalizations.of(context)!.accept,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTermsSection(BuildContext context, {required String title, required String content}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.inversePrimary,
+            ),
+          ),
+          SizedBox(height: 5),
+          Text(
+            content,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: Theme.of(context).textTheme.bodyMedium?.color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Generic Text Button Builder
   Widget _buildTextButton({
     required BuildContext context,
@@ -334,37 +485,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // Gender Toggle
   Widget _buildUserRoleToggle() {
     return ToggleSwitch(
-        minWidth: double.infinity,
-        initialLabelIndex: 0,
-        cornerRadius: 20.0,
-        activeFgColor: Colors.white,
-        inactiveBgColor: Colors.grey,
-        inactiveFgColor: Colors.white,
-        totalSwitches: 3,
-        labels: [
-          AppLocalizations.of(context)!.student,
-          AppLocalizations.of(context)!.teacher,
-          AppLocalizations.of(context)!.parent,
-        ],
-        icons: const [IonIcons.male, IonIcons.female, IonIcons.female],
-        activeBgColors: const [
-          [Colors.blue], // For Student
-          [Colors.green], // For Teacher
-          [Colors.red] // For Parent
-        ],
-        onToggle: (index) {
-          if (index == 0) {
-          } else if (index == 1) {
-            userType = 'Teacher';
-          } else if (index == 2) {
-            userType = 'Parent';
-          }
-          ;
+      minWidth: double.infinity,
+      initialLabelIndex: selectedUserRoleIndex,
+      cornerRadius: 20.0,
+      activeFgColor: Colors.white,
+      inactiveBgColor: Colors.grey,
+      inactiveFgColor: Colors.white,
+      totalSwitches: 3,
+      labels: [
+        AppLocalizations.of(context)!.student,
+        AppLocalizations.of(context)!.teacher,
+        AppLocalizations.of(context)!.parent,
+      ],
+      customTextStyles: [
+        TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.white), // For "Student"
+        TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.white), // For "Teacher"
+        TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.white), // For "Parent"
+      ],
+      activeBgColors: const [
+        [Colors.blue], // For Student
+        [Colors.green], // For Teacher
+        [Colors.red], // For Parent
+      ],
+      onToggle: (index) {
+        setState(() {
+          selectedUserRoleIndex = index ?? 0; // Update the state
+          userType = index == 0
+              ? 'Student'
+              : index == 1
+                  ? 'Teacher'
+                  : 'Parent';
         });
+      },
+    );
   }
 
   // User Role Toggle
   Widget _buildGenderToggle() {
+    
     return ToggleSwitch(
       minWidth: double.infinity,
       initialLabelIndex: 0,
@@ -376,6 +534,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       labels: [
         AppLocalizations.of(context)!.male,
         AppLocalizations.of(context)!.female,
+      ],
+      customTextStyles: [
+        TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white), // For "male"
+        TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white), // For "female"
       ],
       icons: const [IonIcons.male, IonIcons.female],
       activeBgColors: const [

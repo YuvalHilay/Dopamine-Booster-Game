@@ -22,7 +22,10 @@ abstract class UserRepository {
 
   Future<String> getStudentCount();
   
-// Method to change the user's password
+  //
+  Future<void> updateUserName(String firstName, String lastName);
+
+  // Method to change the user's password
   Future<void> changePassword({required String currentPassword, required String newPassword});
 
   // Sends a password reset email to the user with the provided [email].

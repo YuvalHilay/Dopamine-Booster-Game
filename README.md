@@ -65,13 +65,14 @@ ADHD affects millions of individuals worldwide, manifesting as persistent inatte
 - Firebase setup for database and authentication
 - Unity Editor for the game integration
 
-### Installation
+### Installation Flutter App
 1. Clone the repository:
    ```bash
    git clone https://github.com/yourusername/dopamine-booster-game.git
     cd FlutterApp
-   flutter pub get
-   flutter gen-l10n
+      flutter pub get
+      flutter gen-l10n
+      flutter run / flutter build
 
 
 ## Contributing

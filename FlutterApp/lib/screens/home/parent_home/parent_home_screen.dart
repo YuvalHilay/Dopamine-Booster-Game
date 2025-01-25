@@ -1,5 +1,6 @@
 import 'package:Dopamine_Booster/components/app_bar.dart';
 import 'package:Dopamine_Booster/components/my_drawer.dart';
+import 'package:Dopamine_Booster/screens/home/home_menu/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:user_repository/user_repository.dart';
@@ -27,7 +28,7 @@ class _ParentHomeScreenState extends State<ParentHomeScreen> {
       const Placeholder(child: Center(child: Text('Home Page'))),
       const Placeholder(child: Center(child: Text('View Stats'))),
       const Placeholder(child: Center(child: Text('Contact Teacher'))),
-      const Placeholder(child: Center(child: Text('Profile'))),
+      ProfileScreen(email: widget.user.email, userName: '${widget.user.firstName} ${widget.user.lastName}'),
     ];
   }
 

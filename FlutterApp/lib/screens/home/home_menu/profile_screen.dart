@@ -4,42 +4,53 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:user_repository/user_repository.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final String email; // User's unique identifier.
-  final String userName; // User's name.
+  final String email;
+  final String userName;
 
-  ProfileScreen({Key? key, required this.email, required this.userName})
-      : super(key: key);
+  ProfileScreen({
+    Key? key,
+    required this.email,
+    required this.userName,
+  }) : super(key: key);
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // Controllers for the password fields
+  final UserRepository _userRepository = FirebaseUserRepo();
   final TextEditingController currentPasswordController =
       TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
 
-  // Boolean flags to obscure password fields
   bool obscureCurrentPassword = true;
   bool obscureNewPassword = true;
   bool obscureConfirmPassword = true;
 
-  // Icons for the password visibility toggles
   IconData iconCurrentPassword = CupertinoIcons.eye_fill;
   IconData iconNewPassword = CupertinoIcons.eye_fill;
   IconData iconConfirmPassword = CupertinoIcons.eye_fill;
 
-  // Dispose of controllers to avoid memory leaks when the screen is removed from the widget tree
+  @override
+  void initState() {
+    super.initState();
+    firstNameController.text = widget.userName;
+  }
+
   @override
   void dispose() {
     currentPasswordController.dispose();
     newPasswordController.dispose();
     confirmPasswordController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
     super.dispose();
   }
 
@@ -49,11 +60,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            // SliverAppBar to provide a custom app bar with a flexible space
             SliverAppBar(
               expandedHeight: 90,
-              floating: false, // Keeps the app bar visible while scrolling
-              pinned: true, // Keeps the app bar pinned at the top of the screen
+              floating: false,
+              pinned: true,
               flexibleSpace: FlexibleSpaceBar(
                 centerTitle: true,
                 title: Text(
@@ -61,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: GoogleFonts.poppins(
                     textStyle: TextStyle(
                       color: Colors.white,
-                      fontSize: 30, // Larger font size for better readability
+                      fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -79,12 +89,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(20),
                       bottomRight: Radius.circular(20),
-                    ), // Add rounded corners for a modern look
+                    ),
                   ),
                 ),
               ),
             ),
-
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -95,6 +104,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 20),
                     _buildUserInfo(),
                     const SizedBox(height: 40),
+                    _buildChangeNameButton(context),
+                    const SizedBox(height: 20),
                     _buildChangePasswordButton(context),
                   ],
                 ),
@@ -106,7 +117,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // Builds the user's avatar with an option to change it
   Widget _buildUserAvatar() {
     return Stack(
       children: [
@@ -149,12 +159,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // Displays the user's name and email
   Widget _buildUserInfo() {
     return Column(
       children: [
         Text(
-          widget.userName,
+          "${widget.userName}",
           style: GoogleFonts.poppins(
             textStyle: TextStyle(
                 fontSize: 24,
@@ -175,11 +184,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // Builds the button to change the password
+  Widget _buildChangeNameButton(BuildContext context) {
+    return ElevatedButton.icon(
+      onPressed: () {
+        _showChangeNameDialog(context);
+      },
+      icon: Icon(Icons.edit),
+      label: Text(
+        AppLocalizations.of(context)!.changeName,
+        style: GoogleFonts.poppins(
+          textStyle: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+        ),
+      ),
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+      ),
+    );
+  }
+
   Widget _buildChangePasswordButton(BuildContext context) {
     return ElevatedButton.icon(
       onPressed: () {
-        // Show the change password dialog
         _showChangePasswordDialog(context);
       },
       icon: Icon(Icons.lock_outline),
@@ -200,150 +230,304 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _showChangeNameDialog(BuildContext context) {
+    String fullName = widget.userName;
+    List<String> nameParts = fullName.split(' ');
+    // Check if there are at least two parts (first and last name)
+    String firstName = nameParts.isNotEmpty ? nameParts[0] : '';
+    String lastName = nameParts.length > 1 ? nameParts[1] : '';
+    firstNameController.text = firstName;
+    lastNameController.text = lastName;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // change name title
+                Text(
+                  AppLocalizations.of(context)!.changeName,
+                  style: GoogleFonts.poppins(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // logout notice msg
+                Text(AppLocalizations.of(context)!.nameNotice,
+                  style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
+                textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                // first name text field
+                MyTextField(
+                  controller: firstNameController,
+                  hintText: AppLocalizations.of(context)!.firstName,
+                  keyboardType: TextInputType.name,
+                  prefixIcon: const Icon(CupertinoIcons.person),
+                  validator: (value) => FormValidators.validateName(value, maxLength: 25),
+                  obscureText: false,
+                ),
+                const SizedBox(height: 16),
+                // last name text field
+                MyTextField(
+                  controller: lastNameController,
+                  hintText: AppLocalizations.of(context)!.lastName,
+                  keyboardType: TextInputType.name,
+                  prefixIcon: const Icon(CupertinoIcons.person),
+                  validator: (value) =>
+                      FormValidators.validateName(value, maxLength: 25),
+                  obscureText: false,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // cancel button
+                    Flexible(
+                      child: ElevatedButton(
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
+                          style: GoogleFonts.poppins(
+                            color: Colors.red,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.inversePrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    // change name button
+                    Flexible(
+                      child: ElevatedButton(
+                          child: Text(
+                            AppLocalizations.of(context)!.change,
+                            style: GoogleFonts.poppins(
+                              color: Colors.green,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.inversePrimary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          onPressed: () async {
+                            try {
+                              await _userRepository.updateUserName(
+                                firstNameController.text,
+                                lastNameController.text,
+                              );
+                            } catch (e) {
+                              print("Error updating user name: $e");
+                              throw Exception("Failed to update user name: $e");
+                            }
+                            Navigator.of(context).pop();
+                          }
+                          ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void _showChangePasswordDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: Center(
-              child: Text(
-                AppLocalizations.of(context)!.changePassword,
-                style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
-            ),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  MyTextField(
-                    controller: currentPasswordController,
-                    hintText: AppLocalizations.of(context)!.currentPassword,
-                    obscureText: obscureCurrentPassword,
-                    keyboardType: TextInputType.visiblePassword,
-                    prefixIcon: const Icon(CupertinoIcons.lock_fill),
-                    validator: FormValidators.validatePassword,
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          obscureCurrentPassword = !obscureCurrentPassword;
-                          iconCurrentPassword = obscureCurrentPassword
-                              ? CupertinoIcons.eye_fill
-                              : CupertinoIcons.eye_slash_fill;
-                        });
-                      },
-                      icon: Icon(iconCurrentPassword),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  MyTextField(
-                    controller: newPasswordController,
-                    hintText: AppLocalizations.of(context)!.newPassword,
-                    obscureText: obscureNewPassword,
-                    keyboardType: TextInputType.visiblePassword,
-                    prefixIcon: const Icon(CupertinoIcons.lock_fill),
-                    validator: FormValidators.validatePassword,
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          obscureNewPassword = !obscureNewPassword;
-                          iconNewPassword = obscureNewPassword
-                              ? CupertinoIcons.eye_fill
-                              : CupertinoIcons.eye_slash_fill;
-                        });
-                      },
-                      icon: Icon(iconNewPassword),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  MyTextField(
-                    controller: confirmPasswordController,
-                    hintText: AppLocalizations.of(context)!.confirmPass,
-                    obscureText: obscureConfirmPassword,
-                    keyboardType: TextInputType.visiblePassword,
-                    prefixIcon: const Icon(CupertinoIcons.lock_fill),
-                    validator: (value) {
-                      if (value != newPasswordController.text) {
-                        return AppLocalizations.of(context)!.passwordMismatch;
-                      }
-                      return null;
-                    },
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          obscureConfirmPassword = !obscureConfirmPassword;
-                          iconConfirmPassword = obscureConfirmPassword
-                              ? CupertinoIcons.eye_fill
-                              : CupertinoIcons.eye_slash_fill;
-                        });
-                      },
-                      icon: Icon(iconConfirmPassword),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Cancel button
-                  Flexible(
-                    child: ElevatedButton(
-                      child: Text(
-                        AppLocalizations.of(context)!.cancel,
-                        style: GoogleFonts.poppins(
-                          color: Colors.red,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      onPressed: () {
-                        // Clear the controllers' text when the cancel button is pressed
-                        currentPasswordController.clear();
-                        newPasswordController.clear();
-                        confirmPasswordController.clear();
-                        // Close the dialog
-                        Navigator.of(context).pop();
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 5), // Add some spacing between the buttons
-                  // Change password button
-                  Flexible(
-                    child: ElevatedButton(
-                      child: Text(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                padding: const EdgeInsets.all(16),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
                         AppLocalizations.of(context)!.changePassword,
                         style: GoogleFonts.poppins(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                      const SizedBox(height: 8),
+                      Text(
+                        AppLocalizations.of(context)!.passwordNotice,
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: Theme.of(context).colorScheme.inversePrimary,
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                      onPressed: () {
-                        // TODO: Implement password change logic
-                        Navigator.of(context).pop();
-                      },
-                    ),
+                      const SizedBox(height: 16),
+                      _buildPasswordField(
+                        context: context,
+                        controller: currentPasswordController,
+                        hintText: AppLocalizations.of(context)!.currentPassword,
+                        obscureText: obscureCurrentPassword,
+                        onToggle: () {
+                          setState(() {
+                            obscureCurrentPassword = !obscureCurrentPassword;
+                            iconCurrentPassword = obscureCurrentPassword
+                                ? CupertinoIcons.eye_fill
+                                : CupertinoIcons.eye_slash_fill;
+                          });
+                        },
+                        icon: iconCurrentPassword,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildPasswordField(
+                        context: context,
+                        controller: newPasswordController,
+                        hintText: AppLocalizations.of(context)!.newPassword,
+                        obscureText: obscureNewPassword,
+                        onToggle: () {
+                          setState(() {
+                            obscureNewPassword = !obscureNewPassword;
+                            iconNewPassword = obscureNewPassword
+                                ? CupertinoIcons.eye_fill
+                                : CupertinoIcons.eye_slash_fill;
+                          });
+                        },
+                        icon: iconNewPassword,
+                      ),
+                      const SizedBox(height: 16),
+                      _buildPasswordField(
+                        context: context,
+                        controller: confirmPasswordController,
+                        hintText: AppLocalizations.of(context)!.confirmPass,
+                        obscureText: obscureConfirmPassword,
+                        onToggle: () {
+                          setState(() {
+                            obscureConfirmPassword = !obscureConfirmPassword;
+                            iconConfirmPassword = obscureConfirmPassword
+                                ? CupertinoIcons.eye_fill
+                                : CupertinoIcons.eye_slash_fill;
+                          });
+                        },
+                        icon: iconConfirmPassword,
+                        validator: (value) {
+                          if (value != newPasswordController.text) {
+                            return AppLocalizations.of(context)!
+                                .passwordMismatch;
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: ElevatedButton(
+                              child: Text(
+                                AppLocalizations.of(context)!.cancel,
+                                style: GoogleFonts.poppins(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              onPressed: () {
+                                currentPasswordController.clear();
+                                newPasswordController.clear();
+                                confirmPasswordController.clear();
+                                Navigator.of(context).pop();
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          Flexible(
+                            child: ElevatedButton(
+                              child: Text(
+                                AppLocalizations.of(context)!.change,
+                                style: GoogleFonts.poppins(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .inversePrimary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              onPressed: () async {},
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ],
-          );
-        },
-      );
-    },
-  );
-}
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildPasswordField({
+    required BuildContext context,
+    required TextEditingController controller,
+    required String hintText,
+    required bool obscureText,
+    required VoidCallback onToggle,
+    IconData? icon,
+    String? Function(String?)? validator,
+  }) {
+    return MyTextField(
+      controller: controller,
+      hintText: hintText,
+      obscureText: obscureText,
+      keyboardType: TextInputType.visiblePassword,
+      prefixIcon: const Icon(CupertinoIcons.lock_fill),
+      validator: validator ?? FormValidators.validatePassword,
+      suffixIcon: IconButton(
+        onPressed: onToggle,
+        icon: Icon(icon),
+      ),
+    );
+  }
 }

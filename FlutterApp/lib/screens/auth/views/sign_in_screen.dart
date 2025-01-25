@@ -1,5 +1,6 @@
 import 'package:Dopamine_Booster/components/popup_msg.dart';
 import 'package:Dopamine_Booster/screens/auth/blocs/sign_in_bloc/bloc/sign_in_bloc.dart';
+import 'package:Dopamine_Booster/utils/PreferencesService.dart';
 import 'package:Dopamine_Booster/utils/validators/form_validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  final PreferencesService preferencesService = PreferencesService();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -22,6 +24,7 @@ class _SignInScreenState extends State<SignInScreen> {
   IconData iconPassword = CupertinoIcons.eye_fill;
   bool obscurePassword = true;
   String? _errorMsg;
+  bool saveEmail = false; // Track the checkbox state
 
   static const BoxShadow kBoxShadow = BoxShadow(
     color: Colors.black12,
@@ -30,12 +33,36 @@ class _SignInScreenState extends State<SignInScreen> {
     offset: Offset(0, 4),
   );
 
+  // Load saved email when the screen is loaded
+  @override
+  void initState() {
+    super.initState();
+    _loadEmail();
+  }
+
+  // Load the saved email from PreferencesService
+  _loadEmail() async {
+    String? savedEmail = await preferencesService.getSavedEmail();
+    if (savedEmail != null  && savedEmail != 'false') {
+      emailController.text = savedEmail; // Pre-fill email if saved
+      setState(() {
+        saveEmail = true; // Mark checkbox as checked
+      });
+    }
+  }
+
+   // Save email to PreferencesService
+  _saveEmail(String email) async {
+    await preferencesService.saveEmail(email); // Save email using PreferencesService
+  }
+
+  // Show the forgot password dialog
   void _showForgotPasswordDialog() {
+    final signInBloc = context.read<SignInBloc>();
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        final TextEditingController resetEmailController =
-            TextEditingController();
+        final TextEditingController resetEmailController = TextEditingController();
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.forgotPassword),
           content: Column(
@@ -61,24 +88,17 @@ class _SignInScreenState extends State<SignInScreen> {
                   child: Text(AppLocalizations.of(context)!.cancel),
                   onPressed: () => Navigator.of(context).pop(),
                   style: TextButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.inversePrimary,
-                    foregroundColor: Theme.of(context)
-                        .colorScheme
-                        .primary, // Set the text color for the Cancel button
+                    backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                    foregroundColor: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 ElevatedButton(
                   child: Text(AppLocalizations.of(context)!.resetPassword),
                   onPressed: () {
                     if (FormValidators.validateEmail(resetEmailController.text) == null) {
-                      //context.read<SignInBloc>().add(RestPasswordRequired(resetEmailController.text));
+                      signInBloc.add(RestPasswordRequired(resetEmailController.text));
+                      displayMessageToUser(AppLocalizations.of(context)!.passwordResetEmailSent(resetEmailController.text), context);
                       Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text(AppLocalizations.of(context)!
-                                .passwordResetEmailSent)),
-                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -96,14 +116,12 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   void dispose() {
-//  _animationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-
     return Container(
       child: BlocListener<SignInBloc, SignInState>(
         listener: (context, state) {
@@ -114,9 +132,7 @@ class _SignInScreenState extends State<SignInScreen> {
             setState(() => signInRequired = true);
           } else if (state is SignInFailure) {
             setState(() {
-              displayMessageToUser(
-                  AppLocalizations.of(context)!.invalidEmailOrPassword,
-                  context);
+              displayMessageToUser(AppLocalizations.of(context)!.invalidEmailOrPassword, context);
               signInRequired = false;
               _errorMsg = AppLocalizations.of(context)!.invalidEmailOrPassword;
             });
@@ -138,6 +154,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(height: 10),
+                    // Email text fields
                     MyTextField(
                       controller: emailController,
                       hintText: AppLocalizations.of(context)!.email,
@@ -148,6 +165,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       validator: FormValidators.validateEmail,
                     ),
                     const SizedBox(height: 20),
+                    // Password text fields
                     MyTextField(
                       controller: passwordController,
                       hintText: AppLocalizations.of(context)!.password,
@@ -167,25 +185,57 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Align(
-                      alignment: Directionality.of(context) == TextDirection.rtl
-                          ? Alignment.centerLeft
-                          : Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: _showForgotPasswordDialog,
-                        child: Text(
-                          AppLocalizations.of(context)!.forgotPassword,
-                          style: const TextStyle(
+                    //  Checkbox and remember me text and forget password button
+                    Row(
+                      children: [
+                        //Checkbox + Text widget
+                        Checkbox(
+                          checkColor: Theme.of(context).colorScheme.inversePrimary,
+                          value: saveEmail,
+                          onChanged: (bool? newValue) async {
+                            setState(() {
+                              saveEmail = newValue ?? false;
+                            });
+                            // Save or remove the email based on the checkbox state
+                            if (saveEmail) {
+                              // Save the current email from the text field
+                              await _saveEmail(emailController.text);
+                            } else {
+                              // Remove the saved email
+                              await preferencesService.removeSavedEmail();
+                            }
+                          },
+                        ),
+                        Text(AppLocalizations.of(context)!.rememberMe,
+                          style: TextStyle(
                             fontSize: 16,
-                            color: Colors.blue, // Set the text color to blue
-                            fontWeight: FontWeight.bold, // Make the text bold
-                            decoration:
-                                TextDecoration.underline, // Underline the text
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.inversePrimary,
                           ),
                         ),
-                      ),
+                        Spacer(), // Add a Spacer widget here
+                        // Forgot password button
+                        Align(
+                          alignment: Directionality.of(context) == TextDirection.rtl
+                              ? Alignment.centerLeft
+                              : Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: _showForgotPasswordDialog,
+                            child: Text(
+                              AppLocalizations.of(context)!.forgotPassword,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 20),
+                    // Sign in button
                     SizedBox(
                       width: width * 0.9,
                       child: ElevatedButton(
@@ -193,22 +243,23 @@ class _SignInScreenState extends State<SignInScreen> {
                             ? null
                             : () {
                                 if (_formKey.currentState!.validate()) {
+                                  if (saveEmail) {
+                                    _saveEmail(emailController.text); // Save email if checkbox is checked
+                                  }
                                   context.read<SignInBloc>().add(SignInRequired(
                                       emailController.text,
                                       passwordController.text));
                                 }
                               },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.inversePrimary,
+                          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
                         child: signInRequired
-                            ? const CircularProgressIndicator(
-                                color: Colors.white)
+                            ? const CircularProgressIndicator(color: Colors.white)
                             : Text(
                                 AppLocalizations.of(context)!.loginBtn,
                                 style: const TextStyle(

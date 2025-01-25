@@ -18,7 +18,7 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
   List<Category> categories = [];
   String _searchQuery = '';
   String _selectedGrade = 'Third Grade'; // Default selected grade
-  
+
   final List<Map<String, dynamic>> grades = [
     {'name': 'Third Grade', 'icon': Icons.looks_3, 'color': Colors.purple},
     {'name': 'Fourth Grade', 'icon': Icons.looks_4, 'color': Colors.green},
@@ -196,7 +196,8 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
                       TextStyle(color: Theme.of(context).colorScheme.primary),
                 ),
               ),
-              title: Text(getLocalizedCategoryName(context, filteredCategories[index].categoryName)),
+              title: Text(getLocalizedCategoryName(
+                  context, filteredCategories[index].categoryName)),
               subtitle: Text(
                   '${filteredCategories[index].quizCount} quizzes - ${filteredCategories[index].grade}'),
               trailing: Row(
@@ -208,25 +209,29 @@ class _AddCategoriesScreenState extends State<AddCategoriesScreen> {
                   ),
                   // Lock/Unlock button
                   IconButton(
-  icon: Icon(
-    filteredCategories[index].isLocked ? Icons.lock : Icons.lock_open,
-    color: filteredCategories[index].isLocked ? Colors.green : Colors.grey,
-    size: 20,
-  ),
-  onPressed: () async {
-    // Toggle the lock state in the UI
-    setState(() {
-      filteredCategories[index].isLocked = !filteredCategories[index].isLocked;
-    });
+                    icon: Icon(
+                      filteredCategories[index].isLocked
+                          ? Icons.lock
+                          : Icons.lock_open,
+                      color: filteredCategories[index].isLocked
+                          ? Colors.green
+                          : Colors.grey,
+                      size: 20,
+                    ),
+                    onPressed: () async {
+                      // Toggle the lock state in the UI
+                      setState(() {
+                        filteredCategories[index].isLocked =
+                            !filteredCategories[index].isLocked;
+                      });
 
-    // Update the database
-    await quizRepository.updateCategoryLockState(
-      filteredCategories[index].categoryId,
-      filteredCategories[index].isLocked,
-    );
-  },
-),
-
+                      // Update the database
+                      await quizRepository.updateCategoryLockState(
+                        filteredCategories[index].categoryId,
+                        filteredCategories[index].isLocked,
+                      );
+                    },
+                  ),
                 ],
               ),
               onTap: () {

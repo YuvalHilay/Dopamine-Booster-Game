@@ -431,9 +431,9 @@
     "@newPassword": {
         "description": "New Password"
     },
-    "passwordResetEmailSent" : "Password reset email has been sent", 
+    "passwordResetEmailSent" : "A password reset email has been sent to {email}. Please check your inbox.", 
     "@passwordResetEmailSent": {
-        "description": "Password reset email has been sent"
+        "description": "A password reset email has been sent to {email}. Please check your inbox."
     },
     "welcomeBack" : "Welcome Back", 
     "@welcomeBack": {
@@ -494,6 +494,83 @@
     "changeAvatar" : "Change Avatar", 
     "@changeAvatar": {
         "description": "Change Avatar"
+    },
+    "changeName" : "Change Name", 
+    "@changeName": {
+        "description": "Change Name"
+    },
+    "termsTitle" : "Dopamine Booster Terms & Conditions", 
+    "@termsTitle": {
+        "description": "Dopamine Booster Terms & Conditions"
+    },
+    "termsTitle1" : "1. Acceptance of Terms", 
+    "@termsTitle1": {
+        "description": "1. Acceptance of Terms"
+    },
+    "termsTitle2" : "2. Privacy", 
+    "@termsTitle2": {
+        "description": "2. Privacy"
+    },
+    "termsTitle3" : "3. Usage Restrictions", 
+    "@termsTitle3": {
+        "description": "3. Usage Restrictions"
+    },
+    "termsTitle4" : "4. Intellectual Property", 
+    "@termsTitle4": {
+        "description": "4. Intellectual Property"
+    },
+    "termsTitle5" : "5. Updates", 
+    "@termsTitle5": {
+        "description": "5. Updates"
+    },
+    "termsContent1" : "By using this app, you agree to comply with and be bound by these terms and conditions.", 
+    "@termsContent1": {
+        "description": "By using this app, you agree to comply with and be bound by these terms and conditions."
+    },
+    "termsContent2" : "We respect your privacy. Your personal data will not be shared without your consent.", 
+    "@termsContent2": {
+        "description": "We respect your privacy. Your personal data will not be shared without your consent."
+    },
+    "termsContent3" : "You agree not to misuse the app or distribute harmful content.", 
+    "@termsContent3": {
+        "description": "You agree not to misuse the app or distribute harmful content."
+    },
+    "termsContent4" : "All content within the app is protected by intellectual property rights.", 
+    "@termsContent4": {
+        "description": "All content within the app is protected by intellectual property rights."
+    },
+    "termsContent5" : "These terms may be updated. Continued use of the app implies acceptance of any changes.", 
+    "@termsContent5": {
+        "description": "These terms may be updated. Continued use of the app implies acceptance of any changes."
+    },
+    "termsLastMsg" : "For more information, please contact our support team.", 
+    "@termsLastMsg": {
+        "description": "For more information, please contact our support team."
+    },
+    "decline" : "Decline", 
+    "@decline": {
+        "description": "Decline"
+    },
+    "accept" : "Accept", 
+    "@accept": {
+        "description": "Accept"
+    },
+
+    "change" : "Change", 
+    "@change": {
+        "description": "Change"
+    },
+    "rememberMe" : "Remember Me", 
+    "@rememberMe": {
+        "description": "Remember Me"
+    },
+    "passwordNotice" : "Notice: After changing the password, you will be Logged out from the account automatically.", 
+    "@passwordNotice": {
+        "description": "Notice: After changing the password you will be Logged out from the account automatically"
+    },
+    "nameNotice" : "Notice: After changing the user name, you will be Logged out from the account automatically.", 
+    "@nameNotice": {
+        "description": "Notice: After changing the password you will be Logged out from the account automatically"
     },
     "changePassword" : "Change Password", 
     "@changePassword": {

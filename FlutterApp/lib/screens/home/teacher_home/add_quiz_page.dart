@@ -56,28 +56,10 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
 
   // Loads the list of quiz categories that are open for changes (isLocked = false) from the repository.
   // Ensures that only unlocked categories are fetched and displayed in the dropdown.
-  // Loads the list of quiz categories that are open for changes (isLocked = false) from the repository.
-  // Ensures that only unlocked categories are fetched and displayed in the dropdown.
   Future<void> _loadCategories() async {
     try {
       // Fetch the categories asynchronously with isOpen true to recived only the open to change categories (isLocked=false)
       final categories = await quizRepository.getAllCategories(isOpen: true);
-    try {
-      // Fetch the categories asynchronously with isOpen true to recived only the open to change categories (isLocked=false)
-      final categories = await quizRepository.getAllCategories(isOpen: true);
-
-      // Check if the widget is still mounted before calling setState
-      if (mounted) {
-        setState(() {
-          _categories = categories.map((category) => category.categoryName).toList();
-        });
-      }
-    } catch (e) {
-      if (mounted) { 
-        // Only display the message if the widget is still mounted
-        displayMessageToUser('Failed to load categories!', context);
-      }
-    }
       // Check if the widget is still mounted before calling setState
       if (mounted) {
         setState(() {

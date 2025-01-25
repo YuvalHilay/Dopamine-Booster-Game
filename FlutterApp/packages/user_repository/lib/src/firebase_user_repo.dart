@@ -138,39 +138,61 @@ class FirebaseUserRepo implements UserRepository {
     }
   }
 
-
+  @override
   // Method to change the user's password
   Future<void> changePassword({
-    required String currentPassword,
-    required String newPassword,
-  }) async {
-    try {
-      User? user = _firebaseAuth.currentUser;
+  required String currentPassword,
+  required String newPassword,
+}) async {
+  print("Changing password...");
+  print("Current password: $currentPassword");
+  try {
+    // Get the currently logged-in user
+    User? user = _firebaseAuth.currentUser;
 
-      if (user == null) {
-        throw Exception("User is not logged in.");
-      }
-
-      // Re-authenticate the user to verify the current password
-      AuthCredential credential = EmailAuthProvider.credential(
-        email: user.email!,
-        password: currentPassword,
-      );
-
-      await user.reauthenticateWithCredential(credential);
-
-      // Update the password
-      await user.updatePassword(newPassword);
-
-      // Optionally, update user data in Firestore (if needed)
-      await usersCollection.doc(user.uid).update({
-        'password': newPassword, // Update the password field if necessary
-      });
-    } catch (e) {
-      rethrow; // Rethrow the error to be caught in the bloc
+    if (user == null) {
+      throw Exception("User is not logged in.");
     }
-  }
 
+    // Check if the new password is the same as the current password
+    if (currentPassword == newPassword) {
+      throw Exception("The new password cannot be the same as the current password.");
+    }
+
+    // Re-authenticate the user with their current password
+    AuthCredential credential = EmailAuthProvider.credential(
+      email: user.email!,
+      password: currentPassword,
+    );
+
+    // Re-authenticate to ensure the user is verified
+    await user.reauthenticateWithCredential(credential);
+
+    // Update the user's password
+    await user.updatePassword(newPassword);
+
+    // sign the user out and ask them to log in again
+    await _firebaseAuth.signOut();
+
+    print("Password changed successfully. Please log in again.");
+  } on FirebaseAuthException catch (e) {
+    // Handle specific FirebaseAuth errors
+    if (e.code == 'wrong-password') {
+      throw Exception("The current password is incorrect.");
+    } else if (e.code == 'weak-password') {
+      throw Exception("The new password is too weak. Please choose a stronger password.");
+    } else if (e.code == 'requires-recent-login') {
+      throw Exception("This operation requires recent login. Please log in again and try.");
+    } else {
+      throw Exception(e.message ?? "An unexpected error occurred. Please try again.");
+    }
+  } catch (e) {
+    // Handle other generic errors
+    throw Exception("Failed to change password: ${e.toString()}");
+  }
+}
+
+  @override
   Future<String> getStudentCount() async {
     try {
       final querySnapshot = await usersCollection
@@ -187,14 +209,54 @@ class FirebaseUserRepo implements UserRepository {
   }
 
   @override
+  // New method to update first name and last name
+  Future<void> updateUserName(String firstName, String lastName) async {
+    try {
+      // Get the current logged-in user
+      User? user = _firebaseAuth.currentUser;
+
+      if (user == null) {
+        throw Exception("User is not logged in.");
+      }
+
+      // Update the user's name fields in Firestore
+      await usersCollection.doc(user.uid).update({
+        'firstName': firstName,
+        'lastName': lastName,
+      });
+
+      // Sign the user out and ask them to log in again
+    await _firebaseAuth.signOut();
+    } catch (e) {
+      log("Error updating user name: $e");
+      throw Exception("Failed to update user name: $e");
+    }
+  }
+
+  @override
   // Sends a password reset email to the user with the provided [email].
   Future<void> sendPasswordResetEmail(String email) async {
     try {
+
+      // Send the password reset email
       await _firebaseAuth.sendPasswordResetEmail(email: email);
+
+      print("Password reset email sent successfully to $email.");
+    } on FirebaseAuthException catch (e) {
+      // Handle specific FirebaseAuth errors
+      if (e.code == 'invalid-email') {
+        throw Exception("The email address is not valid. Please check and try again.");
+      } else if (e.code == 'user-not-found') {
+        throw Exception("No user found with this email address. Please check and try again.");
+      } else {
+        throw Exception(e.message ?? "An unexpected error occurred. Please try again.");
+      }
     } catch (e) {
-      rethrow;
+      // Handle generic errors
+      throw Exception("Failed to send password reset email: ${e.toString()}");
     }
   }
+
 }
 
 
