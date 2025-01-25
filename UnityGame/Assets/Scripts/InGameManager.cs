@@ -434,3 +434,4 @@ public class InGameManager : MonoBehaviour
         OpenLevelCompleteMenu();
     }
 }
+
